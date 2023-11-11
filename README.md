@@ -10,6 +10,8 @@ This repository contains the code for Assignment 2 of the unit COS30019 - Introd
 - Khang Vo ([@khangdzox](https://github.com/khangdzox))
 - Chanh Hoai Nam Nguyen ([@hnam26](https://github.com/hnam26))
 
+<br>
+
 ## Running the Program
 
 ### System Requirements
@@ -48,7 +50,7 @@ d
 
 To run the program, navigate to the root directory of the repository and run the following command:
 
-```console
+```
 iengine <method> <input_file>
 ```
 
@@ -75,31 +77,69 @@ Example 2: Running `iengine` with method `FC`
 ```
 YES: a, b, p2, p3, p1, d
 ```
+<br>
 
-## Collaborators
+## For Collaborators
 
-This section contains information for collaborators of this repository.
+### Preparation
 
-### Files (placeholder)
+Before starting to work any part of the assignment, please make sure to follow these steps:
 
-- `main.py`: This file contains the main program logic.
+1. Clone the repository to your local machine.
+
+2. Create a new branch for your work. The branch name should be in the format `<your_name>/<feature_name>`. For example, `khangdzox/truth_table`.
+
+3. Make sure to pull the latest changes from the `main` branch before starting to work on your branch.
+
+4. After finishing your work, create a pull request to merge your branch into `main`.
+
+### Program Structures
+
+- `main.py`: This file is the entry point of the program. It will parse the command line arguments, read the input file, and call the appropriate functions.
+
+    - [ ] `main()`: This function is the entry point of the program.
+
 - `truth_table.py`: This file contains the implementation of the truth table checking algorithm.
+
+    - [ ] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
+
+    - [ ] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
+
 - `forward_chaining.py`: This file contains the implementation of the forward chaining algorithm.
+
+    - [ ] `forward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the forward chaining algorithm.
+
 - `backward_chaining.py`: This file contains the implementation of the backward chaining algorithm.
 
-### Methods (placeholder)
+    - [ ] `backward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
 
-- `generate_truth_table()`: This function generates a truth table for a given set of propositional symbols and a logical expression.
-- `forward_chaining()`: This function implements the forward chaining algorithm for a given knowledge base and a query.
-- `backward_chaining()`: This function implements the backward chaining algorithm for a given knowledge base and a query.
+- `dpll.py`: This file contains the implementation of the DPLL algorithm.
+
+    - [ ] `dpll_satisfiable(sentence)`: This method is a function that checks if the given sentence is satisfiable using the DPLL algorithm.
+
+    - [ ] `dpll(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
+
+    - [ ] `find_pure_symbol(clauses, symbols, model)`: This method finds a pure symbol in the given clauses.
+
+    - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
+
+- `chaining_node.py`: This file contains the implementation of the node used in the forward and backward chaining algorithms.
+
+    - [ ] `ChainingNode`: This class represents a node in the chaining algorithm.
+
+- `parse.py`: This file contains utility functions that are used by the other files.
+
+    - [ ] `parse_file(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
+
+- `test.py`: This file contains the test cases for the program.
 
 ### Testing
 
-To test the program, simply run the `main.py` file using Python 3. The program will automatically run the test cases and print the results to the console.
+To test the program, run the `test.py` file using Python 3. The program will automatically run the test cases and print the results to the console.
+
+<br>
 
 ## Resources
-
-This section contains resources used for this assignment.
 
 ### Acknowledgements (placeholder)
 
@@ -108,6 +148,8 @@ This section contains resources used for this assignment.
 ### References (placeholder)
 
 - [Truth Table Generator](https://web.stanford.edu/class/cs103/tools/truth-table-tool/)
+
+<br>
 
 ## Copyright
 
