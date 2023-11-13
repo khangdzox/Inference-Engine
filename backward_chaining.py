@@ -1,15 +1,19 @@
 from chaining_helper import premise, conclusion
 
-def backward_chaining_checking(knowledge_base: list[list[str]], query: str, examined_symbols = None) -> bool:
+def backward_chaining_checking(knowledge_base: list[list[str]], query: str, examined_symbols = None) -> tuple[bool, set[str]]:
     """
     Checks if the query is entailed by the knowledge base using backward chaining.
+    Warning: Do not use the examined_symbols parameter. It's only used for internal recursion.
 
     Args:
-        knowledge_base (list[list[str]]): the list of sentences in Horn form
-        query (str): the query to be checked
+        knowledge_base (list[list[str]]): the list of sentences in Horn form.
+        query (str): the query to be checked.
+        examined_symbols (list[str]): the list of symbols that have been examined. For internal recursion only.
 
     Returns:
-        bool: True if the query is entailed by the knowledge base, False otherwise
+        tuple: a tuple of two elements:
+            bool: True if the query is entailed by the knowledge base, False otherwise.
+             set[str]: the set of symbols that are entailed by the knowledge base.
     """
     # avoid dangerous default value
     if examined_symbols is None:
@@ -17,17 +21,42 @@ def backward_chaining_checking(knowledge_base: list[list[str]], query: str, exam
 
     # if the query is already examined, that means there is a cycle. Return False
     if query in examined_symbols:
-        return False
+        return False, set()
 
     # if the query is in the knowledge base, return True
     if [query] in knowledge_base:
-        return True
+        return True, {query}
 
-    # will return true if any sentence that concludes the query is proved to be true
-    return any(
+    # initialize entailed_symbols with symbols that are already in the knowledge base
+    entailed_symbols = [sentence[0] for sentence in knowledge_base if len(sentence) == 1]
 
-        # will return true if all symbol in the sentence's premise are proved to be true
-        all(
-            backward_chaining_checking(knowledge_base, symbol, examined_symbols + [query]) for symbol in premise(sentence)
-        ) for sentence in knowledge_base if conclusion(sentence) == query
-    )
+    any_true = False
+    # this for loop with loop through the knowledge base to find a sentence that has the query as its conclusion
+    # it will break if one of the sentences is proved to be true
+    for sentence in knowledge_base:
+        if conclusion(sentence) == query:
+
+            all_true = True
+            # this for loop will loop through the premise of the sentence to check if all of them are true
+            # it will break if one of the premise is proved to be false
+            for symbol in premise(sentence):
+                truth, entailed = backward_chaining_checking(knowledge_base, symbol, examined_symbols + [query])
+
+                # if one of the premise is false, then the sentence is false
+                if truth:
+                    entailed_symbols += entailed
+                else:
+                    all_true = False
+                    break
+
+            # if all of the premise are true, then the sentence is true
+            if all_true:
+                any_true = True
+                break
+
+    # if one of the sentences is true, then the query is entailed by the knowledge base
+    if any_true:
+        return True, set(entailed_symbols + [query])
+
+    # if none of the sentences is true, then the query is not entailed by the knowledge base
+    return False, set()
