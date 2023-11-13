@@ -133,19 +133,27 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [x] `parse(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
 
-- `test.py`: This file contains the test cases for the program.
+- `test`: This folder contains the test cases for the program.
+
+    - `test.py`: This file contains the test cases for the entire program.
+
+    - `test_*.py`: These files contain the unit tests for each module of the program
 
 ### Testing
 
-To test the program, run the `test.py` file using Python 3. The program will automatically run the test cases and print the results to the console.
+This program utilises `unittest` module for unit testing.
+
+To test the program, run the command `python -m unittest discover test -v` from the root directory. The program will automatically run the test cases and print the results to the console.
 
 <br>
 
 ## Resources
 
-### Acknowledgements (placeholder)
+### Acknowledgements
 
-- [Truth Table Generator](https://web.stanford.edu/class/cs103/tools/truth-table-tool/)
+- [String split using RegEx](https://docs.python.org/3/library/re.html#re.split)
+
+- [Unit Testing in Python](https://docs.python.org/3/library/unittest.html)
 
 ### References (placeholder)
 
