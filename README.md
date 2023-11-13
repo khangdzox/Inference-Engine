@@ -111,7 +111,7 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `backward_chaining.py`: This file contains the implementation of the backward chaining algorithm.
 
-    - [ ] `backward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
+    - [x] `backward_chaining_checking(knowledge_base, query, examined_symbols)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
 
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
@@ -123,9 +123,11 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
 
-- `chaining_node.py`: This file contains the implementation of the node used in the forward and backward chaining algorithms.
+- `chaining_helper.py`: This file contains the helper method for the chaining algorithm.
 
-    - [ ] `ChainingNode`: This class represents a node in the chaining algorithm.
+    - [x] `premise(sentence)`: This method returns the premise of the given sentence.
+
+    - [x] `conclusion(sentence)`: This method returns the conclusion of the given sentence.
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
