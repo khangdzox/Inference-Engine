@@ -5,68 +5,37 @@ def parse(file_name):
     # Read the file and return the data
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.readlines()
-        lines = [line.strip() for line in lines]
+        # Remove empty lines and spaces
+        lines = [x.strip() for x in lines if x.strip()]
+        lines = [x.replace(" ","") for x in lines if x.strip()]
 
     # Initialize input Knowledge Base (input_kb) and Query lists
-    input_kb = []
-    input_query = []
+    input_kb = lines[1].split(";")
+    input_query = lines[3]
 
-    # Check if the first line is "TELL"
-    if lines[0] == "TELL":
-        # Iterate through the lines starting from the second line
-        for i in range(1, len(lines)):
-            # Check if the current line is "ASK"
-            if lines[i] == "ASK":
-                # Append the next line to the query list and break the loop
-                input_query.append(lines[i+1])
-                break
-            else:
-                # Split the current line by semicolon, remove spaces
-                input_kb = (lines[i].split(";"))
-                input_kb = [x.strip() for x in input_kb if x.strip()]
-                input_kb = [x.replace(" ","") for x in input_kb if x.strip()]
-                
     # Split symbols in the knowledge base and query
-    output_kb = split_symbols(input_kb)
-    output_query = split_symbols(input_query)
+    output_kb = [re.split(r'(&|~|=>|\|\||<=>|\(|\))', x) for x in input_kb if x.strip()]
+    output_query = re.split(r'(&|~|=>|\|\||<=>|\(|\))', input_query)
 
-    return output_kb, output_query
+    # Extract unique symbols from both knowledge base and query
+    symbols = lines[1] + lines[3]
+    symbols = re.split(r'&|~|=>|\|\||<=>|\(|\)|;', symbols)
+    symbols = list(set(symbols))
 
-def split_symbols(arr):
-    output_arr = []
-    for element in arr:
-        # Split the current element by symbols (logical operators and parentheses)
-        new_string = re.split(r'(&|~|=>|\|\||<=>|\(|\))', element)
-        # Remove empty strings and spaces
-        new_string = [x.strip() for x in new_string if x.strip()]
-        output_arr.append(new_string)
-    
-    return output_arr
-
+    return output_kb, output_query, symbols
 
 # Unit Tests
 import unittest
 
 class TestParse(unittest.TestCase):
-    
-    def test_split_symbols(self):
-        # Test case with logical operators and spaces
-        test_arr = ["A & B", "C => D", "~E", "F"]
-        expected_arr = [["A", "&", "B"], ["C", "=>", "D"], ["~", "E"], ["F"]]
-        self.assertEqual(split_symbols(test_arr), expected_arr)
-
-        # Test case with various logical operators and extra spaces
-        test_arr = ["A& B", "C  => D", "~E", "F", "G||H", "I   <=> J", " ( K& L)"]
-        expected_arr = [["A", "&", "B"], ["C", "=>", "D"], ["~", "E"], ["F"], ["G", "||", "H"], ["I", "<=>", "J"], ["(", "K", "&", "L", ")"]]
-        self.assertEqual(split_symbols(test_arr), expected_arr)
             
     def test_parse(self):
         # Test case for the parse function with a sample input file
-        test_kb, test_query = parse("data.txt")
-        expected_kb = [['p2', '=>', 'p3'], ['p3', '=>', 'p1'], ['c', '=>', 'e'], ['b', '&', 'e', '=>', 'f'], ['f', '&', 'g', '=>', 'h'], ['p1S', '=>', 'd'], ['p1', '&', 'p3', '=>', 'c'], ['a'], ['b'], ['p2']]
-        expected_query = [['d']]
-        self.assertEqual(test_kb, expected_kb)
-        self.assertEqual(test_query, expected_query)
+        test_kb, test_query, test_symbols = parse("data.txt")
+        self.assertEqual(test_kb, [['p2', '=>', 'p3'], ['p3', '=>', 'p1'], ['c', '=>', 'e'], ['b', '&', 'e', '=>', 'f'], ['f', '&', 'g', '=>', 'h'], ['p1', '=>', 'd'], ['p1', '&', 'p3', '=>', 'c'], ['a'], ['b'], ['p2']])
+        self.assertEqual(test_query, ['d'])
+        self.assertEqual(set(test_symbols), {'h', 'c', 'b', 'p3', 'f', 'p1', 'e', 'g', 'd', 'a', 'p2'})
+
 
 if __name__ == "__main__":
     unittest.main()
