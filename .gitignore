@@ -1,0 +1,12 @@
+# Byte-compiled Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local development settings
+.env
+venv/
+*.env
+
+# IDE files
+.vscode/
