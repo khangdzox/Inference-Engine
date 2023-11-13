@@ -103,7 +103,7 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
 
-    - [ ] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
+    - [x] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
 
 - `forward_chaining.py`: This file contains the implementation of the forward chaining algorithm.
 
@@ -129,7 +129,7 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
-    - [ ] `parse_file(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
+    - [x] `parse(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
 
 - `test.py`: This file contains the test cases for the program.
 
