@@ -1,7 +1,7 @@
-# Unit test
+
 import unittest
 from parse import parse
-from truth_table import is_sentence_true, truth_table_is_entails
+from truth_table import is_sentence_true, truth_table_checking
 
 class TestIsSentenceTrue(unittest.TestCase):
     """
@@ -47,11 +47,15 @@ class TestIsSentenceTrue(unittest.TestCase):
         self.assertFalse(is_sentence_true(['(', 'A', '&', '(', 'B', '||', 'C', ')', ')', '=>', '(', 'D', '&', '(', 'E', '||', '~', 'F', ')', '<=>', '(', 'G', '||', 'H', ')', ')'], {'A': True, 'B': False, 'C': True, 'D': True, 'E': False, 'F': True, 'G': True, 'H': False}))
 
 class TestTruthTableAlgorithm(unittest.TestCase):
-    def test_truth_table_is_entails(self):
-        
+    """
+    Unit test for truth_table_checking() function.
+    """
+    def test_truth_table_checking(self):
         # Test case 1
-        kb, query, symbols = parse("data.txt")
-        result, count = truth_table_is_entails(kb, query, symbols)
+        kb = [['p2', '=>', 'p3'], ['p3', '=>', 'p1'], ['c', '=>', 'e'], ['b', '&', 'e', '=>', 'f'], ['f', '&', 'g', '=>', 'h'], ['p1', '=>', 'd'], ['p1', '&', 'p3', '=>', 'c'], ['a'], ['b'], ['p2']]
+        query = ['d']
+        symbols = ['p2', 'p3', 'p1', 'c', 'e', 'b', 'f', 'g', 'h', 'd', 'a']
+        result, count = truth_table_checking(kb, query, symbols)
         self.assertTrue(result)
         self.assertEqual(count, 3)
 
@@ -59,7 +63,7 @@ class TestTruthTableAlgorithm(unittest.TestCase):
         kb = [['s', '&', 'p', '=>', 'p'], ['s', '&', 'q', '=>', 'p'], ['s'], ['q']]
         query = ['p']
         symbols = ['s', 'p', 'q']
-        result, count = truth_table_is_entails(kb, query, symbols)
+        result, count = truth_table_checking(kb, query, symbols)
         self.assertTrue(result)
         self.assertEqual(count, 1)
 
@@ -67,7 +71,7 @@ class TestTruthTableAlgorithm(unittest.TestCase):
         kb = [['a', '=>', 'b'], ['b']]
         query = ['a']
         symbols = ['a', 'b']
-        result, count = truth_table_is_entails(kb, query, symbols)
+        result, count = truth_table_checking(kb, query, symbols)
         self.assertFalse(result)
         self.assertEqual(count, 2)
 
