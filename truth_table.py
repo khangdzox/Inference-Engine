@@ -65,6 +65,28 @@ def is_sentence_true(sentence: list[str | bool], model: dict[str, bool]) -> bool
         sentence = sentence[:index-1] + [sentence[index-1] == sentence[index+1]] + sentence[index+2:]
 
     if len(sentence) != 1:
-        raise ValueError("Invalid sentence")
+        raise ValueError("Invalid sentence")   
 
     return bool(sentence[0])
+
+def truth_table_checking(knowledge_base, query, symbols):
+    # Check if the knowledge base entails the query using a truth table
+    return truth_table_check_model(knowledge_base, query, symbols, {})
+
+def truth_table_check_model(knowledge_base, query, symbols, model: dict[str, bool]):
+    # Base case: if there are no symbols left, check if the model satisfies the knowledge base and query
+    if not symbols:
+        if all(is_sentence_true(sentence, model) for sentence in knowledge_base):
+            return is_sentence_true(query, model), 1
+        else:
+            return True, 0
+    else:
+        # Choose a symbol P and recursively evaluate with P being true and false
+        P = symbols[0]
+        rest = symbols[1:]
+
+        # Recursively check with P being true and false
+        true_result, true_count = truth_table_check_model(knowledge_base, query, rest, {**model, P: True})
+        false_result, false_count = truth_table_check_model(knowledge_base, query, rest, {**model, P: False})
+
+        return true_result and false_result, true_count + false_count
