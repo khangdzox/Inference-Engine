@@ -103,7 +103,7 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
 
-    - [ ] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
+    - [x] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
 
 - `forward_chaining.py`: This file contains the implementation of the forward chaining algorithm.
 
@@ -111,7 +111,7 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `backward_chaining.py`: This file contains the implementation of the backward chaining algorithm.
 
-    - [ ] `backward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
+    - [x] `backward_chaining_checking(knowledge_base, query, examined_symbols)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
 
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
@@ -123,27 +123,37 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
 
-- `chaining_node.py`: This file contains the implementation of the node used in the forward and backward chaining algorithms.
+- `chaining_helper.py`: This file contains the helper method for the chaining algorithm.
 
-    - [ ] `ChainingNode`: This class represents a node in the chaining algorithm.
+    - [x] `premise(sentence)`: This method returns the premise of the given sentence.
+
+    - [x] `conclusion(sentence)`: This method returns the conclusion of the given sentence.
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
-    - [ ] `parse_file(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
+    - [x] `parse(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
 
-- `test.py`: This file contains the test cases for the program.
+- `test`: This folder contains the test cases for the program.
+
+    - `test.py`: This file contains the test cases for the entire program.
+
+    - `test_*.py`: These files contain the unit tests for each module of the program
 
 ### Testing
 
-To test the program, run the `test.py` file using Python 3. The program will automatically run the test cases and print the results to the console.
+This program utilises `unittest` module for unit testing.
+
+To test the program, run the command `python -m unittest discover test -v` from the root directory. The program will automatically run the test cases and print the results to the console.
 
 <br>
 
 ## Resources
 
-### Acknowledgements (placeholder)
+### Acknowledgements
 
-- [Truth Table Generator](https://web.stanford.edu/class/cs103/tools/truth-table-tool/)
+- [String split using RegEx](https://docs.python.org/3/library/re.html#re.split)
+
+- [Unit Testing in Python](https://docs.python.org/3/library/unittest.html)
 
 ### References (placeholder)
 

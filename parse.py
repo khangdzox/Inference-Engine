@@ -1,5 +1,4 @@
 import re
-import unittest
 
 def parse(file_name):
     # Read the file and return the data
