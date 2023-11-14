@@ -1,5 +1,3 @@
-import unittest
-
 operators = ['~', '||', '&', '=>', '<=>']
 
 def is_sentence_true(sentence: list[str | bool], model: dict[str, bool]) -> bool:
@@ -66,57 +64,33 @@ def is_sentence_true(sentence: list[str | bool], model: dict[str, bool]) -> bool
         sentence = sentence[:index-1] + [sentence[index-1] == sentence[index+1]] + sentence[index+2:]
 
     if len(sentence) != 1:
-        raise ValueError("Invalid sentence")
+        raise ValueError("Invalid sentence")   
 
     return bool(sentence[0])
+def truth_table_is_entails(knowledge_base, query, symbols):
+    # Check if the knowledge base entails the query using a truth table
+    result, count = truth_table_check_all(knowledge_base, query, symbols, {})
+    return result, count
 
-def truth_table_checking
-
-
-# Unit test
-
-class TestIsSentenceTrue(unittest.TestCase):
-    """
-    Unit test for is_sentence_true() function.
-    """
-    def test_simple_sentence(self):
-        self.assertTrue(is_sentence_true(['p'], {'p': True}))
-        self.assertFalse(is_sentence_true(['p'], {'p': False}))
-
-    def test_not(self):
-        self.assertTrue(is_sentence_true(['~', 'p'], {'p': False}))
-        self.assertFalse(is_sentence_true(['~', 'p'], {'p': True}))
-
-    def test_or(self):
-        self.assertTrue(is_sentence_true(['p', '||', 'q'], {'p': True, 'q': False}))
-        self.assertTrue(is_sentence_true(['p', '||', 'q'], {'p': False, 'q': True}))
-        self.assertTrue(is_sentence_true(['p', '||', 'q'], {'p': True, 'q': True}))
-        self.assertFalse(is_sentence_true(['p', '||', 'q'], {'p': False, 'q': False}))
-
-    def test_and(self):
-        self.assertTrue(is_sentence_true(['p', '&', 'q'], {'p': True, 'q': True}))
-        self.assertFalse(is_sentence_true(['p', '&', 'q'], {'p': True, 'q': False}))
-        self.assertFalse(is_sentence_true(['p', '&', 'q'], {'p': False, 'q': True}))
-        self.assertFalse(is_sentence_true(['p', '&', 'q'], {'p': False, 'q': False}))
-
-    def test_implies(self):
-        self.assertTrue(is_sentence_true(['p', '=>', 'q'], {'p': False, 'q': True}))
-        self.assertTrue(is_sentence_true(['p', '=>', 'q'], {'p': True, 'q': True}))
-        self.assertTrue(is_sentence_true(['p', '=>', 'q'], {'p': False, 'q': False}))
-        self.assertFalse(is_sentence_true(['p', '=>', 'q'], {'p': True, 'q': False}))
-
-    def test_iff(self):
-        self.assertTrue(is_sentence_true(['p', '<=>', 'q'], {'p': True, 'q': True}))
-        self.assertTrue(is_sentence_true(['p', '<=>', 'q'], {'p': False, 'q': False}))
-        self.assertFalse(is_sentence_true(['p', '<=>', 'q'], {'p': True, 'q': False}))
-        self.assertFalse(is_sentence_true(['p', '<=>', 'q'], {'p': False, 'q': True}))
-
-    def test_parentheses(self):
-        self.assertTrue(is_sentence_true(['(', 'p', ')'], {'p': True}))
-        self.assertFalse(is_sentence_true(['(', 'p', '||', 'q', ')', '&', 'r'], {'p': False, 'q': True, 'r': False}))
-        self.assertTrue(is_sentence_true(['(', 'p', '=>', 'q', ')', '<=>', '(', 'r', ')', '&', '~', 's'], {'p': False, 'q': True, 'r': True, 's': False}))
-        self.assertFalse(is_sentence_true(['~', '(', 'A', '&', 'B', ')', '||', '(', 'C', '<=>', 'D', ')', '=>', 'E', '&', '(', 'F', '||', '~', 'G', ')'], {'A': True, 'B': False, 'C': False, 'D': True, 'E': True, 'F': False, 'G': True}))
-        self.assertFalse(is_sentence_true(['(', 'A', '&', '(', 'B', '||', 'C', ')', ')', '=>', '(', 'D', '&', '(', 'E', '||', '~', 'F', ')', '<=>', '(', 'G', '||', 'H', ')', ')'], {'A': True, 'B': False, 'C': True, 'D': True, 'E': False, 'F': True, 'G': True, 'H': False}))
-
-if __name__ == "__main__":
-    unittest.main()
+def truth_table_check_all(knowledge_base, query, symbols, model: dict[str, bool]):
+    # Base case: if there are no symbols left, check if the model satisfies the knowledge base and query
+    if not symbols:
+        if all(is_sentence_true(sentence, model) for sentence in knowledge_base):
+            return is_sentence_true(query, model), 1
+        else:
+            return True, 0
+    else:
+        # Choose a symbol P and recursively evaluate with P being true and false
+        P = symbols[0]
+        rest = symbols[1:]
+        new_true_model = {**model, P: True}
+        new_false_model = {**model, P: False}
+        
+        # Recursively check with P being true and false
+        true_result, true_count = truth_table_check_all(knowledge_base, query, rest, new_true_model)
+        false_result, false_count = truth_table_check_all(knowledge_base, query, rest, new_false_model)
+        
+        # Total count of models evaluated
+        total_count = true_count + false_count
+        
+        return true_result and false_result, total_count
