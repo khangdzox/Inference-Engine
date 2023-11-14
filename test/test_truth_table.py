@@ -44,6 +44,5 @@ class TestIsSentenceTrue(unittest.TestCase):
         self.assertFalse(is_sentence_true(['~', '(', 'A', '&', 'B', ')', '||', '(', 'C', '<=>', 'D', ')', '=>', 'E', '&', '(', 'F', '||', '~', 'G', ')'], {'A': True, 'B': False, 'C': False, 'D': True, 'E': True, 'F': False, 'G': True}))
         self.assertFalse(is_sentence_true(['(', 'A', '&', '(', 'B', '||', 'C', ')', ')', '=>', '(', 'D', '&', '(', 'E', '||', '~', 'F', ')', '<=>', '(', 'G', '||', 'H', ')', ')'], {'A': True, 'B': False, 'C': True, 'D': True, 'E': False, 'F': True, 'G': True, 'H': False}))
 
-
 if __name__ == "__main__":
     unittest.main()
