@@ -38,7 +38,7 @@ class TestBackwardChaining(unittest.TestCase):
     def test_complex(self):
         self.assertEqual(
             backward_chaining_checking([['p2', '=>', 'p3'], ['p3', '=>', 'p1'], ['c', '=>', 'e'], ['b', '&', 'e', '=>', 'f'], ['f', '&', 'g', '=>', 'h'], ['p1', '=>', 'd'], ['p1', '&', 'p3', '=>', 'c'], ['a'], ['b'], ['p2']], 'd'),
-            (True, {'a', 'b', 'p2', 'p3', 'p1', 'd'}))
+            (True, {'p2', 'p3', 'p1', 'd'}))
 
 if __name__ == "__main__":
     unittest.main()
