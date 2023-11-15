@@ -1,6 +1,4 @@
-
 import unittest
-from parse import parse
 from truth_table import is_sentence_true, truth_table_checking
 
 class TestIsSentenceTrue(unittest.TestCase):
