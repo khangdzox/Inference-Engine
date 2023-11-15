@@ -1,6 +1,5 @@
-from collections import deque
-from parse import parse
-from chaining_helper import *
+from chaining_helper import premise, conclusion
+
 def forward_chaining_checking(knowledge_base, query):
     """
     This function implements the forward chaining algorithm for the given knowledge base and query.
@@ -19,11 +18,10 @@ def forward_chaining_checking(knowledge_base, query):
         if p == query:
             return True, set(infered + [p])
         if p not in infered:
-            infered.append(p) 
+            infered.append(p)
             for c in knowledge_base:
                 if p in premise(c) and len(c) != 1:
                     count[tuple(c)] -= 1
                     if count[tuple(c)] == 0:
                         queue.append(conclusion(c))
     return False, set()
-
