@@ -28,7 +28,7 @@ def backward_chaining_checking(knowledge_base: list[list[str]], query: str, exam
         return True, {query}
 
     # initialize entailed_symbols with symbols that are already in the knowledge base
-    entailed_symbols = [sentence[0] for sentence in knowledge_base if len(sentence) == 1]
+    entailed_symbols = []
 
     any_true = False
     # this for loop with loop through the knowledge base to find a sentence that has the query as its conclusion
