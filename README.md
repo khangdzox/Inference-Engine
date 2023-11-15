@@ -101,13 +101,13 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `truth_table.py`: This file contains the implementation of the truth table checking algorithm.
 
-    - [ ] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
+    - [x] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
 
     - [x] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
 
 - `forward_chaining.py`: This file contains the implementation of the forward chaining algorithm.
 
-    - [ ] `forward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the forward chaining algorithm.
+    - [x] `forward_chaining_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the forward chaining algorithm.
 
 - `backward_chaining.py`: This file contains the implementation of the backward chaining algorithm.
 

@@ -1,4 +1,3 @@
-
 import unittest
 from truth_table import is_sentence_true, truth_table_checking
 
