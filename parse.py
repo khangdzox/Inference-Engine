@@ -4,6 +4,7 @@ def parse(file_name):
     # Read the file and return the data
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.readlines()
+
         # Remove empty lines and spaces
         lines = [x.strip() for x in lines if x.strip()]
         lines = [x.replace(" ","") for x in lines if x.strip()]
@@ -19,6 +20,10 @@ def parse(file_name):
     # Extract unique symbols from both knowledge base and query
     symbols = lines[1] + lines[3]
     symbols = re.split(r'&|~|=>|\|\||<=>|\(|\)|;', symbols)
-    symbols = list(set(symbols))
+    
+    # Remove empty strings from the list
+    symbols = list(set(filter(None, symbols)))
+    output_kb = [[x for x in y if x] for y in output_kb]
+    output_query = [x for x in output_query if x]
 
     return output_kb, output_query, symbols
