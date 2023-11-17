@@ -3,9 +3,10 @@ from parse import parse
 from truth_table import truth_table_checking
 from forward_chaining import forward_chaining_checking
 from backward_chaining import backward_chaining_checking
+# from resolution import resolution_checking
 # from dpll import dpll_satisfiable
 
-cli_usage = f"Usage: iengine <method> <input_file>\nWhere\n\t{'<method>':<11} is one of [TT, FC, BC, DPLL]\n\t{'<input_file>':<11} is the path to the input file\n\nExample: iengine TT data.txt"
+cli_usage = f"Usage: iengine <method> <input_file>\nWhere\n\t{'<method>':<12} is one of:\n\t - {'TT':<4} for  Truth Table checking\n\t - {'FC':<4} for  Forward-Chaining checking\n\t - {'BC':<4} for  Backward-Chaining checking\n\t - {'RES':<4} for  RESolution checking\n\t - {'DPLL'} for  DPLL-algorithm checking\n\n\t{'<input_file>':<12} is the path to the input file\n\nExample: iengine TT data.txt"
 
 # Get command line arguments
 try:

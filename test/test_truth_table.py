@@ -73,5 +73,13 @@ class TestTruthTableAlgorithm(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(count, 2)
 
+    def test_general(self):
+        kb = [['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')'], ['c'], ['~', 'f', '||', 'g']]
+        query = ['~', 'd', '&', '(', '~', 'g', '=>', '~', 'f', ')']
+        symbols = ['a', 'b', 'c', 'd', 'f', 'g']
+        result, count = truth_table_checking(kb, query, symbols)
+        self.assertTrue(result)
+        self.assertEqual(count, 3)
+
 if __name__ == "__main__":
     unittest.main()
