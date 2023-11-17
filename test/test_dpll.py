@@ -1,5 +1,25 @@
 import unittest
-from dpll import find_pure_symbol, find_unit_clause, is_clause_true
+from dpll import find_pure_symbol, find_unit_clause, is_clause_true, dpll_satisfiable
+
+class TestDPLLSatisfiable(unittest.TestCase):
+    """
+    Test dpll_satisfiable
+    """
+
+    def test_simple_true(self):
+        clauses = [['a', '~b'], ['~b', 'c'], ['~c']]
+        symbols = ['a', 'b', 'c']
+        self.assertTrue(dpll_satisfiable(clauses, symbols, {}))
+
+    def test_simple_false(self):
+        clauses = [['~a', '~b'], ['~b', 'c'], ['b', '~a'], ['a']]
+        symbols = ['a', 'b', 'c']
+        self.assertFalse(dpll_satisfiable(clauses, symbols, {}))
+
+    def test_complex(self):
+        clauses = [['p', '~q', 'r'], ['~p', 'q'], ['~r', 's', 't'], ['~s', '~t'], ['~p', 'r', 't'], ['q', '~s']]
+        symbols = ['p', 'q', 'r', 's', 't']
+        self.assertTrue(dpll_satisfiable(clauses, symbols, {}))
 
 class TestFindPureSymbol(unittest.TestCase):
     """

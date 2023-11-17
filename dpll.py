@@ -61,11 +61,7 @@ def find_pure_symbol(symbols: list[str], clauses: list[list[str]], model: dict[s
     """
 
     # eliminate clause that is already true
-    new_clauses = []
-    for clause in clauses:
-        if not is_clause_true(clause, model):
-            new_clauses.append(clause)
-    clauses = new_clauses
+    clauses = [clause for clause in clauses if not is_clause_true(clause, model)]
 
     flatten_clauses = [symbol for clause in clauses for symbol in clause]
 
@@ -90,6 +86,10 @@ def find_unit_clause(clauses: list[list[str]], model: dict[str, bool]) -> tuple[
     Returns:
         tuple[str | None, bool]: A unit clause and its value.
     """
+
+    # eliminate clause that is already true
+    clauses = [clause for clause in clauses if not is_clause_true(clause, model)]
+
     if single_symbol_clauses := [clause for clause in clauses if len(clause) == 1]:
         first_symbol = single_symbol_clauses[0][0]
         return first_symbol.removeprefix('~'), not first_symbol.startswith('~')
