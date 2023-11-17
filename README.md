@@ -117,8 +117,6 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
 
-    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
-
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
     - [ ] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
@@ -138,6 +136,8 @@ Before starting to work any part of the assignment, please make sure to follow t
 - `parse.py`: This file contains utility functions that are used by the other files.
 
     - [x] `parse(input_file)`: This method parses the input file and returns the knowledge base, the query, and the set of propositional symbols.
+
+    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
 
 - `test`: This folder contains the test cases for the program.
 
