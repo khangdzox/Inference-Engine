@@ -125,9 +125,9 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
 
-    - [ ] `find_pure_symbol(clauses, symbols, model)`: This method finds a pure symbol in the given clauses.
+    - [ ] `find_pure_symbol(symbols, clauses, model)`: This method finds a pure symbol in the given clauses.
 
-    - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
+    - [ ] `find_unit_clause(clauses, model)`: This method finds a unit clause in the given clauses.
 
 - `chaining_helper.py`: This file contains the helper method for the chaining algorithm.
 
