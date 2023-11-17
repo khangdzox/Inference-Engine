@@ -97,8 +97,6 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `main.py`: This file is the entry point of the program. It will parse the command line arguments, read the input file, and call the appropriate functions.
 
-    - [ ] `main()`: This function is the entry point of the program.
-
 - `truth_table.py`: This file contains the implementation of the truth table checking algorithm.
 
     - [x] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
@@ -113,11 +111,19 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [x] `backward_chaining_checking(knowledge_base, query, examined_symbols)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the backward chaining algorithm.
 
+- `resolution.py`: This file contains the implementation of the resolution algorithm.
+
+    - [ ] `resolution_checking(knowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the resolution algorithm.
+
+    - [ ] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
+
+    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
+
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
-    - [ ] `dpll_satisfiable(sentence)`: This method is a function that checks if the given sentence is satisfiable using the DPLL algorithm.
+    - [ ] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
 
-    - [ ] `dpll(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
+    - [ ] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
 
     - [ ] `find_pure_symbol(clauses, symbols, model)`: This method finds a pure symbol in the given clauses.
 
