@@ -1,92 +1,113 @@
-
 operators = ['~', '||', '&', '=>', '<=>']
 
 def and_or_tranformation(sentence : list[str]):
 
     # biconditional elemination
-    while '<=>' in sentence:
-        index = sentence.index('<=>')
-        sentence = sentence[:index-1] + ['(', '~', sentence[index-1], '||', sentence[index+1], ')', '&', '(', '~', sentence[index+1], '||', sentence[index-1], ')'] + sentence[index+2:]
 
-    # implication elemination
-    while '=>' in sentence:
-        index = sentence.index('=>')
-        sentence = sentence[:index-1] + ['(', '~', sentence[index-1], '||', sentence[index+1], ')'] + sentence[index+2:]
-
-    # De Morgan's Law
-    if '~' in sentence:
-        if sentence[sentence.index('~') + 1] == '(':
-            sentence = de_morgan(sentence[sentence.index('~') + 1:])
-
+    sentence = bidirectional_elemination(sentence)
+    sentence = implication_elemination(sentence)
+    sentence = de_morgan_law(sentence)
     # Distributivity of & over ||
-    if '||' in sentence:
-        if sentence[sentence.index('||') + 1] == '(':
-            sentence = distribute(sentence[sentence.index('||') - 1:])
+    # if '||' in sentence:
+    #     if sentence[sentence.index('||') + 1] == '(':
+    #         operators_not_and = ['~', '||', '=>', '<=>']
+    #         if (operators_not_and in sentence[sentence.index('||') + 2:]):
+    #         sentence = distribute(sentence[sentence.index('||') - 1:])
 
     return sentence
 
-def de_morgan(sentence):
-    # Implement De Morgan's Law
-    if '&' in sentence:
-        conjunction_index = sentence.index('&')
+def de_morgan_law(sentence):
+    index = 0
+    while index < len(sentence):
+        if (sentence[index] == '~') and (sentence[index + 1] == '('):
 
-        # Initialize the new sentence
-        new_sentence = sentence[:conjunction_index]
-        new_sentence.insert(1, '~')
+            temp_sentence = []
+            # print(sentence[-1 : sentence.index('~')])
 
+            following_begin, following_end = get_following_operand(sentence, sentence.index('~'))
 
-        for i in range(conjunction_index + 1, len(sentence), 2):
-            new_sentence += ['||', '~', sentence[i]]
-    else:
-        conjunction_index = sentence.index('||')
+            # sentence = sentence[:index] + ['~' , '('] + simplify_parentheses(sentence[sentence.index('~') + 2: following_end]) + [')'] + sentence[following_end + 1:]
+            # _ , following_end = get_following_operand(sentence, sentence.index('~'))
+            temp_sentence = sentence[:index] + ['(']
+            if get_main_operator(sentence[following_begin + 1: following_end]) == '&':
+                changed_operator = "||"
+            elif get_main_operator(sentence[following_begin + 1: following_end]) == '||':          
+                changed_operator = "&"
+                
+            sub_index = -1
+            sub_sentence = sentence[following_begin + 1: following_end]
+            while sub_index < len(sub_sentence):
+                operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
+                temp_sentence += ['~'] + sub_sentence[operand_begin: operand_end + 1] + [changed_operator]
+                sub_index = operand_end + 1
 
-        # Initialize the new sentence
-        new_sentence = sentence[:conjunction_index]
-        new_sentence.insert(1, '~')
-
-
-        for i in range(conjunction_index + 1, len(sentence), 2):
-            new_sentence += ['&', '~', sentence[i]]
-
-    new_sentence.append(')')
-    return new_sentence
+            temp_sentence = temp_sentence[:-1]
+            temp_sentence += [')'] + sentence[following_end + 1:]
+            sentence = temp_sentence
+        index += 1
+    return sentence
 
 def distribute(sentence):
-# def distribute_or_over_and(sentence):
-    # Find the index of the OR operator '||'
-    or_index = sentence.index('||') if '||' in sentence else -1
+    # print(sentence)
+    # while ('||' in sentence) and (sentence[sentence.index('||') + 1] == '('):
+    #     print(sentence)
+    #     previous_begin, previous_end = get_previous_operand(sentence, sentence.index('||'))
+    #     following_begin, following_end = get_following_operand(sentence, sentence.index('||'))
 
-    # If OR operator is not found, return the original sentence
-    if or_index == -1:
-        return sentence
+    #     sentence = sentence[previous_begin : previous_end + 1] + ['||', '('] + simplify_parentheses(sentence[sentence.index('||') + 2: following_end]) + [')'] + sentence[following_end + 1:]
+    #     _ , following_end = get_following_operand(sentence, sentence.index('||'))
+    #     # temp_sentence = sentence[previous_begin : previous_end + 1]
+    #     temp_sentence = []
+    #     for i in sentence[following_begin + 1: following_end]:
+    #         if i != '&':
+    #             temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||', i, ')']
+    #         else:
+    #             temp_sentence += ['&']
 
-    # Find the index of the AND operator '&'
-    and_index = sentence.index('&', or_index)
+    #     temp_sentence += sentence[following_end + 1:]
+    #     sentence = temp_sentence
+    index = 0
+    while index < len(sentence):
+        if sentence[index] == '||':
+            if sentence[index + 1] == '(' or sentence[index - 1] == ')':
+                previous_begin, previous_end = get_previous_operand(sentence, sentence.index('||'))
+                following_begin, following_end = get_following_operand(sentence, sentence.index('||'))
 
-    # Extract operands before and after the AND operator
-    operand_before = sentence[:or_index]
-    print(operand_before)
-    operand_after = sentence[and_index + 1::2]
-    # remove all the '&' operator in operand_after
+                sentence = sentence[previous_begin : previous_end + 1] + ['||', '('] + simplify_parentheses(sentence[sentence.index('||') + 2: following_end]) + [')'] + sentence[following_end + 1:]
+                _ , following_end = get_following_operand(sentence, sentence.index('||'))
+                # temp_sentence = sentence[previous_begin : previous_end + 1]
+                temp_sentence = []
+                for i in sentence[following_begin + 1: following_end]:
+                    if i != '&':
+                        temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||', i, ')']
+                    else:
+                        temp_sentence += ['&']
 
-    # Extract the AND operands
-    and_operands = sentence[or_index + 2:and_index]
+                temp_sentence += sentence[following_end + 1:]
+                sentence = temp_sentence
+    return sentence
 
-    # Distribute '||' over '&'
-    distributed_sentence = ['('] + operand_before + ['||', and_operands[0], ')']
+def bidirectional_elemination(sentence):
+    while '<=>' in sentence:
+        index = sentence.index('<=>')
+        previous_begin, previous_end = get_previous_operand(sentence, index)
+        following_begin, following_end = get_following_operand(sentence, index)
+        sentence = sentence[:previous_begin] +  ['(', '('] + sentence[previous_begin:previous_end + 1] + ['=>'] + sentence[following_begin:following_end + 1] + [')'] + ['&'] + ['('] + sentence[following_begin:following_end + 1] + ['=>'] + sentence[previous_begin:previous_end + 1] +[')', ')'] + sentence[following_end + 1:]
+    return sentence
 
-    while operand_after:
-        operand = operand_after.pop(0)
-        distributed_sentence += ['&', '(', operand_before[0], '||',  operand, ')']
-
-    return distributed_sentence
-
+def implication_elemination(sentence):
+    while '=>' in sentence:
+        index = sentence.index('=>')
+        previous_begin, previous_end = get_previous_operand(sentence, index)
+        following_begin, following_end = get_following_operand(sentence, index)
+        sentence = sentence[:previous_begin] +  ['(', '~'] + sentence[previous_begin:previous_end + 1] + ['||'] + sentence[following_begin:following_end + 1] + [')'] + sentence[following_end + 1:]
+    return sentence    
+    
 ##############################################################################################################
 
-def get_previous_operand(sentence: list[str], index: int) -> tuple[int, int]:
+def get_previous_operand(sentence: list[str], index: int) -> tuple[int, int] :
     # Process the parentheses
     # Return the index of the outermost parentheses
-
     if sentence[index - 1] != ')':
         return index - 1, index - 1
 

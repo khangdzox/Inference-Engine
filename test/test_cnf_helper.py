@@ -1,5 +1,5 @@
 import unittest
-from cnf_helper import add_parentheses_around_operator, and_or_tranformation, get_main_operator, get_previous_operand, get_following_operand, simplify_parentheses
+from cnf_helper import *
 
 class TestAndOrTransformation(unittest.TestCase):
     """
@@ -8,27 +8,174 @@ class TestAndOrTransformation(unittest.TestCase):
     Args:
         unittest (_type_): _description_
     """
-    def test_and_or_transformation(self):
-        # Test biconditional elemination
-        sentence = ['a', '<=>', 'b']
-        sentence = and_or_tranformation(sentence)
-        self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')', '&', '(', '~', 'b', '||', 'a', ')'])
+    # def test_and_or_transformation(self):
+    #     # Test biconditional elemination
+    #     sentence = ['a', '<=>', 'b']
+    #     sentence = and_or_tranformation(sentence)
+    #     self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')', '&', '(', '~', 'b', '||', 'a', ')'])
 
-        # Test implication elemination
+    #     # Test implication elemination
+    #     sentence = ['a', '=>', 'b']
+    #     sentence = and_or_tranformation(sentence)
+    #     self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')'])
+
+    #     # Test De Morgan's Law
+    #     sentence = ['~', '(', 'a', '&', 'b', ')']
+    #     sentence = and_or_tranformation(sentence)
+    #     self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', ')'])
+
+    #     # Test Distributivity of & over ||
+    #     sentence = ['a', '||', '(', 'c', '&', 'd', '&', 'e', ')']
+    #     sentence = and_or_tranformation(sentence)
+    #     print(sentence)
+    #     self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'a', '||', 'd', ')', '&', '(', 'a', '||', 'e', ')'])
+
+class TestBidirectionalElemination(unittest.TestCase):
+    def test_single(self):
+        sentence = ['a', '<=>', 'b']
+        sentence = bidirectional_elemination(sentence)
+        self.assertEqual(sentence, ['(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')'])
+
+    def test_multiple(self):
+        sentence = ['a', '<=>', 'b', '<=>', 'c']
+        sentence = bidirectional_elemination(sentence)
+        
+        # ((((a => b) & (b => a)) => c) & (c => ((a => b) & (b => a))))
+        self.assertEqual(sentence, ['(', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', '=>', 'c', ')', '&', '(', 'c', '=>', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', ')'])
+
+    def test_multiple_operands_with_single_operand(self):
+        sentence = ['(', 'a', '||', 'b', ')', '<=>', 'c']
+        sentence = bidirectional_elemination(sentence)
+        # (((a || b ) => c) & (c => (a||b)))
+        self.assertEqual(sentence, ['(', '(', '(', 'a', '||', 'b', ')', '=>', 'c', ')', '&', '(', 'c', '=>', '(', 'a', '||', 'b', ')', ')', ')'])
+
+    def test_multiple_operands_with_multiple_operands(self):
+        sentence = ['(', 'a', '||', 'b', ')', '<=>', '(', 'c', '||', 'd', ')']
+        sentence = bidirectional_elemination(sentence)
+        # (((a || b ) => (c || d)) & ((c || d) => (a||b)))
+        self.assertEqual(sentence, ['(', '(', '(', 'a', '||', 'b', ')', '=>', '(', 'c', '||', 'd', ')', ')', '&', '(', '(', 'c', '||', 'd', ')', '=>', '(', 'a', '||', 'b', ')', ')', ')'])
+
+    def test_single_operands_with_multiple_operands(self):
+        sentence = ['a', '<=>', '(', 'b', '||', 'c', ')']
+        sentence = bidirectional_elemination(sentence)
+        # ((a => (b || c)) & ((b || c) => a))
+        self.assertEqual(sentence, ['(', '(', 'a', '=>', '(', 'b', '||', 'c', ')', ')', '&', '(', '(', 'b', '||', 'c', ')', '=>', 'a', ')', ')'])
+
+    def test_bidirectional_in_bidirectional(self):
+        sentence = ['(', 'a', '<=>', 'b', ')', '<=>', '(', 'c', '<=>', 'd', ')']
+        sentence = bidirectional_elemination(sentence)
+        # ((((a => b) & (b => a)) => ((c => d) & (d => c))) & (((c => d) & (d => c)) => ((a => b) & (b => a))))
+        self.assertEqual(sentence, ['(', '(', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', '=>', '(', '(', '(', 'c', '=>', 'd', ')', '&', '(', 'd', '=>', 'c', ')', ')', ')', ')', '&', '(', '(', '(', '(', 'c', '=>', 'd', ')', '&', '(', 'd', '=>', 'c', ')', ')', ')', '=>', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', ')', ')'])
+
+class TestImplicationElemination(unittest.TestCase):
+    def test_single(self):
         sentence = ['a', '=>', 'b']
-        sentence = and_or_tranformation(sentence)
+        sentence = implication_elemination(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')'])
 
-        # Test De Morgan's Law
+    def test_multiple(self):
+        sentence = ['a', '=>', 'b', '=>', 'c']
+        sentence = implication_elemination(sentence)
+        # (~(~a||b)) || c)
+        self.assertEqual(sentence, ['(', '~', '(', '~', 'a', '||', 'b', ')', '||', 'c', ')'])
+    def test_multiple_operands_with_single_operand(self):
+        sentence = ['(', 'a', '||', 'b', ')', '=>', 'c']
+        sentence = implication_elemination(sentence)
+        # (~(a||b)) || c)
+        self.assertEqual(sentence, ['(', '~', '(', 'a', '||', 'b', ')', '||', 'c', ')'])
+
+    def test_multiple_operands_with_multiple_operands(self):
+        sentence = ['(', 'a', '||', 'b', ')', '=>', '(', 'c', '||', 'd', ')']
+        sentence = implication_elemination(sentence)
+        # (~ (a || b) || (c || d))
+        self.assertEqual(sentence, ['(', '~', '(', 'a', '||', 'b', ')', '||', '(', 'c', '||', 'd', ')', ')'])
+    def test_single_operands_with_multiple_operands(self):
+        sentence = ['a', '=>', '(', 'b', '||', 'c', ')']
+        sentence = implication_elemination(sentence)
+        # ((~a || (b || c)))
+        self.assertEqual(sentence, ['(', '~', 'a', '||', '(', 'b', '||', 'c', ')', ')'])
+
+    def test_bidirectional_in_bidirectional(self):
+        sentence = ['(', 'a', '=>', 'b', ')', '=>', '(', 'c', '=>', 'd', ')']
+        sentence = implication_elemination(sentence)
+        # ((~(~a || b)) || (~c || d))
+        self.assertEqual(sentence, ['(', '~', '(', '(', '~', 'a', '||', 'b', ')', ')', '||', '(', '(', '~', 'c', '||', 'd', ')', ')', ')'])
+
+class TestDeMorganLaw(unittest.TestCase):
+    def test_single(self):
         sentence = ['~', '(', 'a', '&', 'b', ')']
-        sentence = and_or_tranformation(sentence)
+        sentence = de_morgan_law(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', ')'])
 
-        # Test Distributivity of & over ||
-        sentence = ['a', '||', '(', 'c', '&', 'd', '&', 'e', ')']
-        sentence = and_or_tranformation(sentence)
-        print(sentence)
-        self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'a', '||', 'd', ')', '&', '(', 'a', '||', 'e', ')'])
+        sentence = ['~', '(', 'a', '||', 'b', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', ')'])
+
+    def test_multiple(self):
+        sentence = ['~', '(', 'a', '&', 'b', '&', 'c', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', '||', '~', 'c', ')'])
+
+        sentence = ['~', '(', 'a', '||', 'b', '||', 'c', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', '&', '~', 'c', ')'])
+
+    def test_nested(self):
+        sentence = ['~', '(', 'a', '&', '(', 'b', '&', 'c', ')', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', '||', '~', 'c', ')'])
+
+        sentence = ['~', '(', 'a', '||', '(', 'b', '||', 'c', ')', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', '&', '~', 'c', ')'])
+
+    def test_no_parentheses(self):
+        sentence = ['~', 'a', '&', 'b']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['~', 'a', '&', 'b'])
+
+        sentence = ['~', 'a', '||', 'b']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['~', 'a', '||', 'b'])
+
+    def test_with_before_operands_1(self):
+        sentence = ['a', '&', '~', '(', 'b', '&', 'c', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['a', '&', '(', '~', 'b', '||', '~', 'c', ')'])
+
+        sentence = ['a', '&', '~', '(', 'b', '||', 'c', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['a', '&', '(', '~', 'b', '&', '~', 'c', ')'])
+
+    def test_with_before_operands_2(self):
+        sentence = ['a', '&', '(','~', '(','b', '&', 'c', ')', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['a', '&', '(', '(', '~', 'b', '||', '~', 'c', ')', ')'])
+
+        sentence = ['a', '&', '(','~', '(','b', '||', 'c', ')', ')']
+        sentence = de_morgan_law(sentence)
+        self.assertEqual(sentence, ['a', '&', '(', '(', '~', 'b', '&', '~', 'c', ')', ')'])
+
+class TestDistribute(unittest.TestCase):
+    def test_single_with_multiple(self):
+        sentence = ['a', '||', '(', 'b', '&', 'c', ')']
+        sentence = distribute(sentence)
+        self.assertEqual(sentence, ['(', 'a', '||', 'b', ')', '&', '(', 'a', '||', 'c', ')'])
+
+    def test_multiple_with_multiple(self):
+        sentence = ['(', 'a', '&', 'b', ')', '||', '(', 'c', '&', 'd', ')'] 
+        sentence = distribute(sentence)
+        # ((a & b) || c) & ((a & b) || d))
+        self.assertEqual(sentence, ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')'])
+
+    def test_multiple_multiple_with_multiple(self):
+        sentence = ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', '||', '(', 'e', '&', 'f', ')']
+        while ('||' in sentence) and (sentence[sentence.index('||') + 1] == '('):
+            print("exist")
+        sentence = distribute(sentence)
+        print (sentence)
+        # (((a & b) || c) & ((a & b) || d)) || e) & (((a & b) || c) & ((a & b) || d)) || f)
+        # self.assertEqual(sentence, ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', ')', '||', 'e', ')', '&', '(', '(', '(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', ')', '||', 'f', ')'])
 
 class TestGetPreviousOperand(unittest.TestCase):
     """
