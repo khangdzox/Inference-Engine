@@ -117,23 +117,27 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
 
-    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
-
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
-    - [ ] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
+    - [x] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
 
-    - [ ] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
+    - [x] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
 
-    - [ ] `find_pure_symbol(clauses, symbols, model)`: This method finds a pure symbol in the given clauses.
+    - [x] `find_pure_symbol(symbols, clauses, model)`: This method finds a pure symbol in the given clauses.
 
-    - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
+    - [x] `find_unit_clause(clauses, model)`: This method finds a unit clause in the given clauses.
 
-- `chaining_helper.py`: This file contains the helper method for the chaining algorithm.
+    - [x] `is_clause_true(clause, model)`: This method checks if the given CNF clause is true in the given model.
+
+- `chaining_helper.py`: This file contains the helper methods for the chaining algorithm.
 
     - [x] `premise(sentence)`: This method returns the premise of the given sentence.
 
     - [x] `conclusion(sentence)`: This method returns the conclusion of the given sentence.
+
+- `cnf_helper.py`: This file contains the helper methods for the CNF conversion.
+
+    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
