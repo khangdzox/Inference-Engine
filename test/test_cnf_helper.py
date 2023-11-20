@@ -1,7 +1,7 @@
 import unittest
-from cnf_helper import *
+from cnf_helper import transform_to_cnf, bidirectional_elemination, implication_elemination, de_morgan_law, distribute, get_previous_operand, get_following_operand, add_parentheses_around_operator, get_main_operator, simplify_parentheses, get_inside_parentheses
 
-class TestAndOrTransformation(unittest.TestCase):
+class TestTransformToCNF(unittest.TestCase):
     """
     Test transform_to_cnf.
     """
@@ -25,13 +25,16 @@ class TestAndOrTransformation(unittest.TestCase):
         sentence = ['a', '||', '(', 'c', '&', 'd', '&', 'e', ')']
         sentence = transform_to_cnf(sentence)
         self.assertEqual(sentence, [['a', 'c'], ['a', 'd'], ['a', 'e']])
-    
+
     def test_complex(self):
         sentence = ['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')']
         sentence = transform_to_cnf(sentence)
         print(sentence)
 
 class TestBidirectionalElemination(unittest.TestCase):
+    """
+    Test bidirectional_elemination.
+    """
     def test_single(self):
         sentence = ['a', '<=>', 'b']
         sentence = bidirectional_elemination(sentence)
@@ -40,7 +43,7 @@ class TestBidirectionalElemination(unittest.TestCase):
     def test_multiple(self):
         sentence = ['a', '<=>', 'b', '<=>', 'c']
         sentence = bidirectional_elemination(sentence)
-        
+
         # ((((a => b) & (b => a)) => c) & (c => ((a => b) & (b => a))))
         self.assertEqual(sentence, ['(', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', '=>', 'c', ')', '&', '(', 'c', '=>', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', ')'])
 
@@ -69,6 +72,9 @@ class TestBidirectionalElemination(unittest.TestCase):
         self.assertEqual(sentence, ['(', '(', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', '=>', '(', '(', '(', 'c', '=>', 'd', ')', '&', '(', 'd', '=>', 'c', ')', ')', ')', ')', '&', '(', '(', '(', '(', 'c', '=>', 'd', ')', '&', '(', 'd', '=>', 'c', ')', ')', ')', '=>', '(', '(', '(', 'a', '=>', 'b', ')', '&', '(', 'b', '=>', 'a', ')', ')', ')', ')', ')'])
 
 class TestImplicationElemination(unittest.TestCase):
+    """
+    Test implication_elemination.
+    """
     def test_single(self):
         sentence = ['a', '=>', 'b']
         sentence = implication_elemination(sentence)
@@ -103,6 +109,9 @@ class TestImplicationElemination(unittest.TestCase):
         self.assertEqual(sentence, ['(', '~', '(', '(', '~', 'a', '||', 'b', ')', ')', '||', '(', '(', '~', 'c', '||', 'd', ')', ')', ')'])
 
 class TestDeMorganLaw(unittest.TestCase):
+    """
+    Test de_morgan_law.
+    """
     def test_single(self):
         sentence = ['~', '(', 'a', '&', 'b', ')']
         sentence = de_morgan_law(sentence)
@@ -158,13 +167,16 @@ class TestDeMorganLaw(unittest.TestCase):
         self.assertEqual(sentence, ['a', '&', '(', '(', '~', 'b', '&', '~', 'c', ')', ')'])
 
 class TestDistribute(unittest.TestCase):
+    """
+    Test distribute.
+    """
     def test_single_with_multiple(self):
         sentence = ['a', '||', '(', 'b', '&', 'c', ')']
         sentence = distribute(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'b', ')', '&', '(', 'a', '||', 'c', ')'])
 
     def test_multiple_with_single(self):
-        sentence = ['(', 'a', '&', 'b', ')', '||', 'c'] 
+        sentence = ['(', 'a', '&', 'b', ')', '||', 'c']
         sentence = distribute(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'b', '||', 'c', ')'])
 
@@ -276,13 +288,25 @@ class TestSimplifyParentheses(unittest.TestCase):
         sentence = ['(', 'a', '&', 'b', ')']
         self.assertEqual(simplify_parentheses(sentence), ['a', '&', 'b'])
 
-    def test_multiple(self):
+    def test_nested(self):
         sentence = ['(', 'a', '&', '(', 'b', '&', 'c', ')', ')']
         self.assertEqual(simplify_parentheses(sentence), ['a', '&', 'b', '&', 'c'])
 
-    def test_nested(self):
+        sentence = ['(', 'a', '&', '(', '(', 'b', '&', 'c', ')', ')', ')']
+        self.assertEqual(simplify_parentheses(sentence), ['a', '&', 'b', '&', 'c'])
+
         sentence = ['(', 'a', '&', '(', 'b', '&', '(', 'c', '&', 'd', ')', ')', ')']
         self.assertEqual(simplify_parentheses(sentence), ['a', '&', 'b', '&', 'c', '&', 'd'])
+
+    def test_nested_with_not(self):
+        sentence = ['~', '(', 'c', ')']
+        self.assertEqual(simplify_parentheses(sentence), ['~', 'c'])
+
+        sentence = ['(', '~', 'a', '&', '(', '~', '(', 'b', '&', 'c', ')', ')', ')']
+        self.assertEqual(simplify_parentheses(sentence), ['~', 'a', '&', '~', '(', 'b', '&', 'c', ')'])
+
+        sentence = ['(', 'a', '&', '~', '(', 'b', '&', '(', 'c', '&', '~', 'd', ')', ')', ')']
+        self.assertEqual(simplify_parentheses(sentence), ['a', '&', '~', '(', 'b', '&', 'c', '&', '~', 'd', ')'])
 
     def test_no_parentheses(self):
         sentence = ['a', '&', 'b']
@@ -295,6 +319,23 @@ class TestSimplifyParentheses(unittest.TestCase):
     def test_complex(self):
         sentence = ['(', '(', '~', '(', '(', '~', 'c', '||', '~', 'd', ')', ')', '||', 'a', ')', ')']
         self.assertEqual(simplify_parentheses(sentence), ['~', '(', '~', 'c', '||', '~', 'd', ')', '||', 'a'])
+
+class TestGetInsideParentheses(unittest.TestCase):
+    """
+    Test get_inside_parentheses.
+    """
+
+    def test_simple(self):
+        sentence = ['(', 'a', '&', 'b', ')']
+        self.assertEqual(get_inside_parentheses(sentence, 0, 4), (1, 3))
+
+    def test_complex(self):
+        sentence = ['(', 'a', '&', '(', 'b', '&', '(', 'c', '&', 'd', ')', ')', ')']
+        self.assertEqual(get_inside_parentheses(sentence, 3, 11), (4, 10))
+
+    def test_with_not(self):
+        sentence = ['(', '~', '(', 'a', '&', 'b', ')', ')']
+        self.assertEqual(get_inside_parentheses(sentence, 1, 6), (3, 5))
 
 if __name__ == "__main__":
     unittest.main()
