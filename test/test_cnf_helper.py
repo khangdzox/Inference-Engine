@@ -1,5 +1,5 @@
 import unittest
-from cnf_helper import transform_to_cnf, bidirectional_elemination, implication_elemination, de_morgan_law, distribute, get_previous_operand, get_following_operand, add_parentheses_around_operator, get_main_operator, simplify_parentheses, get_inside_parentheses
+from cnf_helper import transform_to_cnf, bidirectional_elemination, implication_elemination, apply_de_morgan, apply_distributivity_or_over_and, get_previous_operand, get_following_operand, add_parentheses_around_operator, get_main_operator, simplify_parentheses, get_inside_parentheses
 
 class TestTransformToCNF(unittest.TestCase):
     """
@@ -114,56 +114,56 @@ class TestDeMorganLaw(unittest.TestCase):
     """
     def test_single(self):
         sentence = ['~', '(', 'a', '&', 'b', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', ')'])
 
         sentence = ['~', '(', 'a', '||', 'b', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', ')'])
 
     def test_multiple(self):
         sentence = ['~', '(', 'a', '&', 'b', '&', 'c', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', '||', '~', 'c', ')'])
 
         sentence = ['~', '(', 'a', '||', 'b', '||', 'c', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', '&', '~', 'c', ')'])
 
     def test_nested(self):
         sentence = ['~', '(', 'a', '&', '(', 'b', '&', 'c', ')', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', '~', 'a', '||', '(', '~', 'b', '||', '~', 'c', ')', ')'])
 
         sentence = ['~', '(', '~', 'a', '||', '(', '~', 'b', '&', 'c', ')', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['(', 'a', '&', '(', 'b', '||', '~', 'c', ')', ')'])
 
     def test_no_parentheses(self):
         sentence = ['~', 'a', '&', 'b']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['~', 'a', '&', 'b'])
 
         sentence = ['~', 'a', '||', 'b']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['~', 'a', '||', 'b'])
 
     def test_with_before_operands_1(self):
         sentence = ['a', '&', '~', '(', 'b', '&', 'c', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['a', '&', '(', '~', 'b', '||', '~', 'c', ')'])
 
         sentence = ['a', '&', '~', '(', 'b', '||', 'c', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['a', '&', '(', '~', 'b', '&', '~', 'c', ')'])
 
     def test_with_before_operands_2(self):
         sentence = ['a', '&', '(','~', '(','b', '&', 'c', ')', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['a', '&', '(', '(', '~', 'b', '||', '~', 'c', ')', ')'])
 
         sentence = ['a', '&', '(','~', '(','b', '||', 'c', ')', ')']
-        sentence = de_morgan_law(sentence)
+        sentence = apply_de_morgan(sentence)
         self.assertEqual(sentence, ['a', '&', '(', '(', '~', 'b', '&', '~', 'c', ')', ')'])
 
 class TestDistribute(unittest.TestCase):
@@ -172,22 +172,22 @@ class TestDistribute(unittest.TestCase):
     """
     def test_single_with_multiple(self):
         sentence = ['a', '||', '(', 'b', '&', 'c', ')']
-        sentence = distribute(sentence)
+        sentence = apply_distributivity_or_over_and(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'b', ')', '&', '(', 'a', '||', 'c', ')'])
 
     def test_multiple_with_single(self):
         sentence = ['(', 'a', '&', 'b', ')', '||', 'c']
-        sentence = distribute(sentence)
+        sentence = apply_distributivity_or_over_and(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'b', '||', 'c', ')'])
 
     def test_multiple_multiple_with_multiple(self):
         sentence = ['(', 'a', '&', 'b', ')', '||', '(', 'c', '&', 'd', ')', '||', '(', 'e', '&', 'f', ')']
-        sentence = distribute(sentence)
+        sentence = apply_distributivity_or_over_and(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'c', '||', 'e', ')', '&', '(', 'b', '||', 'c', '||', 'e', ')', '&', '(', 'a', '||', 'd', '||', 'e', ')', '&', '(', 'b', '||', 'd', '||', 'e', ')', '&', '(', 'a', '||', 'c', '||', 'f', ')', '&', '(', 'b', '||', 'c', '||', 'f', ')', '&', '(', 'a', '||', 'd', '||', 'f', ')', '&', '(', 'b', '||', 'd', '||', 'f', ')'])
 
     def test_complex(self):
         sentence = ['(', 'a', '&', '(', 'b', '||', 'c', ')', ')', '||', '(', 'd', '&', 'e', ')']
-        sentence = distribute(sentence)
+        sentence = apply_distributivity_or_over_and(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'd', ')', '&', '(', 'b', '||', 'c', '||', 'd', ')', '&', '(', 'a', '||', 'e', ')', '&', '(', 'b', '||', 'c', '||', 'e', ')'])
 
 class TestGetPreviousOperand(unittest.TestCase):
