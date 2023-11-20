@@ -24,7 +24,7 @@ def transform_to_cnf(sentence : list[str]) -> list[list[str]]:
     sentence = simplify_parentheses(sentence)
     # print("7. simplify_parentheses(sentence)")
     # print(sentence)
-    sentence = de_morgan_law(sentence)
+    sentence = apply_de_morgan(sentence)
     # print("8. de_morgan_law(sentence)")
     # print(sentence)
     sentence = simplify_parentheses(sentence)
@@ -50,7 +50,7 @@ def transform_to_cnf(sentence : list[str]) -> list[list[str]]:
 
     return result
 
-def de_morgan_law(sentence: list[str]) -> list[str]:
+def apply_de_morgan(sentence: list[str]) -> list[str]:
     """
     Apply De Morgan's law to the sentence to move negation inside the parentheses.
 
@@ -66,31 +66,52 @@ def de_morgan_law(sentence: list[str]) -> list[str]:
 
     index = 0
     while index < len(sentence):
+
+        # if the current character is a '~' and followed by a '(', then apply De Morgan's law
         if (sentence[index] == '~') and (sentence[index + 1] == '('):
 
             temp_sentence = []
 
-            following_begin, following_end = get_following_operand(sentence, index)
+            # get the parentheses enclosing the operand after the '~'
+            parenthesis_begin, parenthesis_end = get_following_operand(sentence, index)
 
-            temp_sentence = sentence[:index] + ['(']
-            if get_main_operator(sentence[following_begin + 1: following_end]) == '&':
-                changed_operator = "||"
-            elif get_main_operator(sentence[following_begin + 1: following_end]) == '||':
-                changed_operator = "&"
+            # get the sub-sentence inside the parentheses
+            sub_sentence = sentence[parenthesis_begin + 1: parenthesis_end]
+
+            # determine the operator after the De Morgan's law is applied
+            if get_main_operator(sub_sentence) == '&':
+                operator_after_demorgan = "||"
+            elif get_main_operator(sub_sentence) == '||':
+                operator_after_demorgan = "&"
+
+            # if the operator inside parentheses is not all '&' or not all '||', then the sentence is invalid
             else:
                 raise ValueError("Invalid sentence: unwanted operator")
 
             sub_index = -1
-            sub_sentence = sentence[following_begin + 1: following_end]
+            # iterate through the operands in the sub-sentence
             while sub_index < len(sub_sentence):
                 operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
-                temp_sentence += ['~'] + sub_sentence[operand_begin: operand_end + 1] + [changed_operator]
+
+                # apply De Morgan's law to the operand and add it to the new sentence
+                # format: ~ operand operator_after_demorgan
+                temp_sentence += ['~'] + sub_sentence[operand_begin: operand_end + 1] + [operator_after_demorgan]
+
+                # update the index to the next operator
                 sub_index = operand_end + 1
 
-            sentence = temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+            # replace the sub-sentence with the new sentence
+            # old: ... ~ ( sub-sentence ) ...
+            # new: ... ( new sub-sentence ) ...
+            sentence = sentence[:index] + ['('] + temp_sentence[:-1] + [')'] + sentence[parenthesis_end + 1:]
+
+            # eliminate double negation created during the application of De Morgan's law
             sentence = double_negation_elimination(sentence)
 
+        # if the current character is not a '~' and followed by a '(', then skip
         index += 1
+
+    # return the sentence
     return sentence
 
 def distribute(sentence: list[str]) -> list[str]:
