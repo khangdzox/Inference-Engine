@@ -1,18 +1,56 @@
 operators = ['~', '||', '&', '=>', '<=>']
 
-def and_or_tranformation(sentence : list[str]):
+def transform_to_cnf(sentence : list[str]):
 
-    # biconditional elemination
-
+    print("===================================")
+    sentence = add_parentheses_around_operator(sentence, "&")
+    print("1. add_parentheses_around_operator(sentence, '&')")
+    print(sentence)
+    sentence = add_parentheses_around_operator(sentence, "||")
+    print("2. add_parentheses_around_operator(sentence, '||')")
+    print(sentence)
+    sentence = simplify_parentheses(sentence)
+    print("3. simplify_parentheses(sentence)")
+    print(sentence)
     sentence = bidirectional_elemination(sentence)
+    print("4. bidirectional_elemination(sentence)")
+    print(sentence)
     sentence = implication_elemination(sentence)
+    print("5. implication_elemination(sentence)")
+    print(sentence)
+    sentence = double_negation_elimination(sentence)
+    print("6. double_negation_elimination(sentence)")
+    print(sentence)
+    sentence = simplify_parentheses(sentence)
+    print("7. simplify_parentheses(sentence)")
+    print(sentence)
     sentence = de_morgan_law(sentence)
-    # Distributivity of & over ||
-    # if '||' in sentence:
-    #     if sentence[sentence.index('||') + 1] == '(':
-    #         operators_not_and = ['~', '||', '=>', '<=>']
-    #         if (operators_not_and in sentence[sentence.index('||') + 2:]):
-    #         sentence = distribute(sentence[sentence.index('||') - 1:])
+    print("8. de_morgan_law(sentence)")
+    print(sentence)
+    sentence = simplify_parentheses(sentence)
+    print("9. simplify_parentheses(sentence)")
+    print(sentence)
+    sentence = combine_negation(sentence)
+    print("10. combine_negation(sentence)")
+    print(sentence)
+    sentence = simplify_parentheses(sentence)
+    print("11. simplify_parentheses(sentence)")
+    print(sentence)
+    sentence = distribute(sentence)
+    print("12. distribute(sentence)")
+    print(sentence)
+
+    # split to list of clauses
+    sentence = "".join(sentence)
+    sentence = sentence.replace('(', '').replace(')', '')
+    print("13. split to list of clauses")
+    print(sentence)
+    sentence = sentence.split('&')
+    print("14. split to list of clauses")
+    print(sentence)
+    sentence = [i.split('||') for i in sentence]
+    print("15. split to list of clauses")
+    print(sentence)
 
     return sentence
 
@@ -22,12 +60,9 @@ def de_morgan_law(sentence):
         if (sentence[index] == '~') and (sentence[index + 1] == '('):
 
             temp_sentence = []
-            # print(sentence[-1 : sentence.index('~')])
 
-            following_begin, following_end = get_following_operand(sentence, sentence.index('~'))
+            following_begin, following_end = get_following_operand(sentence, index)
 
-            # sentence = sentence[:index] + ['~' , '('] + simplify_parentheses(sentence[sentence.index('~') + 2: following_end]) + [')'] + sentence[following_end + 1:]
-            # _ , following_end = get_following_operand(sentence, sentence.index('~'))
             temp_sentence = sentence[:index] + ['(']
             if get_main_operator(sentence[following_begin + 1: following_end]) == '&':
                 changed_operator = "||"
@@ -41,50 +76,51 @@ def de_morgan_law(sentence):
                 temp_sentence += ['~'] + sub_sentence[operand_begin: operand_end + 1] + [changed_operator]
                 sub_index = operand_end + 1
 
-            temp_sentence = temp_sentence[:-1]
-            temp_sentence += [')'] + sentence[following_end + 1:]
-            sentence = temp_sentence
+            sentence = temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+            sentence = double_negation_elimination(sentence)
+
         index += 1
     return sentence
 
 def distribute(sentence):
-    # print(sentence)
-    # while ('||' in sentence) and (sentence[sentence.index('||') + 1] == '('):
-    #     print(sentence)
-    #     previous_begin, previous_end = get_previous_operand(sentence, sentence.index('||'))
-    #     following_begin, following_end = get_following_operand(sentence, sentence.index('||'))
-
-    #     sentence = sentence[previous_begin : previous_end + 1] + ['||', '('] + simplify_parentheses(sentence[sentence.index('||') + 2: following_end]) + [')'] + sentence[following_end + 1:]
-    #     _ , following_end = get_following_operand(sentence, sentence.index('||'))
-    #     # temp_sentence = sentence[previous_begin : previous_end + 1]
-    #     temp_sentence = []
-    #     for i in sentence[following_begin + 1: following_end]:
-    #         if i != '&':
-    #             temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||', i, ')']
-    #         else:
-    #             temp_sentence += ['&']
-
-    #     temp_sentence += sentence[following_end + 1:]
-    #     sentence = temp_sentence
     index = 0
     while index < len(sentence):
+
         if sentence[index] == '||':
-            if sentence[index + 1] == '(' or sentence[index - 1] == ')':
-                previous_begin, previous_end = get_previous_operand(sentence, sentence.index('||'))
-                following_begin, following_end = get_following_operand(sentence, sentence.index('||'))
+            previous_begin, previous_end = get_previous_operand(sentence, index)
+            following_begin, following_end = get_following_operand(sentence, index)
+            temp_sentence = []
 
-                sentence = sentence[previous_begin : previous_end + 1] + ['||', '('] + simplify_parentheses(sentence[sentence.index('||') + 2: following_end]) + [')'] + sentence[following_end + 1:]
-                _ , following_end = get_following_operand(sentence, sentence.index('||'))
-                # temp_sentence = sentence[previous_begin : previous_end + 1]
-                temp_sentence = []
-                for i in sentence[following_begin + 1: following_end]:
-                    if i != '&':
-                        temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||', i, ')']
-                    else:
-                        temp_sentence += ['&']
+            if sentence[index + 1] == '(':
+                sub_index = -1
+                sub_sentence = sentence[following_begin + 1: following_end]
+                
+                while sub_index < len(sub_sentence):
+                    operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
+                    temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||'] + sub_sentence[operand_begin: operand_end + 1] + [')', '&']
+                    sub_index = operand_end + 1
+                
+                sentence = sentence[:previous_begin] + ['('] + temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+                sentence = simplify_parentheses(sentence)
+                
+                index = previous_begin
 
-                temp_sentence += sentence[following_end + 1:]
-                sentence = temp_sentence
+            elif sentence[index - 1] == ')':
+                sub_index = -1
+                sub_sentence = sentence[previous_begin + 1: previous_end]
+                
+                while sub_index < len(sub_sentence):
+                    operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
+                    temp_sentence += ['('] + sub_sentence[operand_begin: operand_end + 1] + ['||'] + sentence[following_begin: following_end + 1] + [')', '&']
+                    sub_index = operand_end + 1
+                
+                sentence = sentence[:previous_begin] + ['('] + temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+                sentence = simplify_parentheses(sentence)
+                
+                index = previous_begin
+        
+        index += 1
+    
     return sentence
 
 def bidirectional_elemination(sentence):
@@ -103,6 +139,20 @@ def implication_elemination(sentence):
         sentence = sentence[:previous_begin] +  ['(', '~'] + sentence[previous_begin:previous_end + 1] + ['||'] + sentence[following_begin:following_end + 1] + [')'] + sentence[following_end + 1:]
     return sentence    
     
+def double_negation_elimination(sentence):
+    index = 0
+    while index < len(sentence):
+        if sentence[index] == '~' and sentence[index + 1] == '~':
+            sentence = sentence[:index] + sentence[index + 2:]
+        index += 1
+    return sentence
+
+def combine_negation(sentence):
+    while '~' in sentence:
+        index = sentence.index('~')
+        sentence = sentence[:index] + ['~' + sentence[index + 1]] + sentence[index + 2:]
+    return sentence
+
 ##############################################################################################################
 
 def get_previous_operand(sentence: list[str], index: int) -> tuple[int, int]:
@@ -154,6 +204,10 @@ def get_following_operand(sentence: list[str], index: int) -> tuple[int, int]:
     Returns:
         tuple[int, int]: The begin and end index of the operand following the operator.
     """
+    if sentence[index + 1] == '~':
+        _, end_after_not = get_following_operand(sentence, index + 1)
+        return index + 1, end_after_not
+
     # if the next character is not a '(', then the operand is a single character
     if sentence[index + 1] != '(':
         return index + 1, index + 1
@@ -319,3 +373,7 @@ def get_main_operator(sentence: list[str]) -> str | None:
 
     # return the operator
     return operator
+
+sentence = ['(', '(', '~', '(', '(', '~', 'c', '||', '~', 'd', ')', ')', '||', 'a', ')', ')']
+sentence = simplify_parentheses(sentence)
+print(sentence)

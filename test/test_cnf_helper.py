@@ -3,32 +3,33 @@ from cnf_helper import *
 
 class TestAndOrTransformation(unittest.TestCase):
     """
-    Test and_or_transformation.
-
-    Args:
-        unittest (_type_): _description_
+    Test transform_to_cnf.
     """
-    # def test_and_or_transformation(self):
-    #     # Test biconditional elemination
-    #     sentence = ['a', '<=>', 'b']
-    #     sentence = and_or_tranformation(sentence)
-    #     self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')', '&', '(', '~', 'b', '||', 'a', ')'])
+    def test_simple(self):
+        # Test biconditional elemination
+        sentence = ['a', '<=>', 'b']
+        sentence = transform_to_cnf(sentence)
+        self.assertEqual(sentence, [['~a', 'b'], ['~b', 'a']])
 
-    #     # Test implication elemination
-    #     sentence = ['a', '=>', 'b']
-    #     sentence = and_or_tranformation(sentence)
-    #     self.assertEqual(sentence, ['(', '~', 'a', '||', 'b', ')'])
+        # Test implication elemination
+        sentence = ['a', '=>', 'b']
+        sentence = transform_to_cnf(sentence)
+        self.assertEqual(sentence, [['~a', 'b']])
 
-    #     # Test De Morgan's Law
-    #     sentence = ['~', '(', 'a', '&', 'b', ')']
-    #     sentence = and_or_tranformation(sentence)
-    #     self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', ')'])
+        # Test De Morgan's Law
+        sentence = ['~', '(', 'a', '&', 'b', ')']
+        sentence = transform_to_cnf(sentence)
+        self.assertEqual(sentence, [['~a', '~b']])
 
-    #     # Test Distributivity of & over ||
-    #     sentence = ['a', '||', '(', 'c', '&', 'd', '&', 'e', ')']
-    #     sentence = and_or_tranformation(sentence)
-    #     print(sentence)
-    #     self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'a', '||', 'd', ')', '&', '(', 'a', '||', 'e', ')'])
+        # Test Distributivity of & over ||
+        sentence = ['a', '||', '(', 'c', '&', 'd', '&', 'e', ')']
+        sentence = transform_to_cnf(sentence)
+        self.assertEqual(sentence, [['a', 'c'], ['a', 'd'], ['a', 'e']])
+    
+    def test_complex(self):
+        sentence = ['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')']
+        sentence = transform_to_cnf(sentence)
+        print(sentence)
 
 class TestBidirectionalElemination(unittest.TestCase):
     def test_single(self):
@@ -123,11 +124,11 @@ class TestDeMorganLaw(unittest.TestCase):
     def test_nested(self):
         sentence = ['~', '(', 'a', '&', '(', 'b', '&', 'c', ')', ')']
         sentence = de_morgan_law(sentence)
-        self.assertEqual(sentence, ['(', '~', 'a', '||', '~', 'b', '||', '~', 'c', ')'])
+        self.assertEqual(sentence, ['(', '~', 'a', '||', '(', '~', 'b', '||', '~', 'c', ')', ')'])
 
-        sentence = ['~', '(', 'a', '||', '(', 'b', '||', 'c', ')', ')']
+        sentence = ['~', '(', '~', 'a', '||', '(', '~', 'b', '&', 'c', ')', ')']
         sentence = de_morgan_law(sentence)
-        self.assertEqual(sentence, ['(', '~', 'a', '&', '~', 'b', '&', '~', 'c', ')'])
+        self.assertEqual(sentence, ['(', 'a', '&', '(', 'b', '||', '~', 'c', ')', ')'])
 
     def test_no_parentheses(self):
         sentence = ['~', 'a', '&', 'b']
@@ -162,20 +163,20 @@ class TestDistribute(unittest.TestCase):
         sentence = distribute(sentence)
         self.assertEqual(sentence, ['(', 'a', '||', 'b', ')', '&', '(', 'a', '||', 'c', ')'])
 
-    def test_multiple_with_multiple(self):
-        sentence = ['(', 'a', '&', 'b', ')', '||', '(', 'c', '&', 'd', ')'] 
+    def test_multiple_with_single(self):
+        sentence = ['(', 'a', '&', 'b', ')', '||', 'c'] 
         sentence = distribute(sentence)
-        # ((a & b) || c) & ((a & b) || d))
-        self.assertEqual(sentence, ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')'])
+        self.assertEqual(sentence, ['(', 'a', '||', 'c', ')', '&', '(', 'b', '||', 'c', ')'])
 
     def test_multiple_multiple_with_multiple(self):
-        sentence = ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', '||', '(', 'e', '&', 'f', ')']
-        while ('||' in sentence) and (sentence[sentence.index('||') + 1] == '('):
-            print("exist")
+        sentence = ['(', 'a', '&', 'b', ')', '||', '(', 'c', '&', 'd', ')', '||', '(', 'e', '&', 'f', ')']
         sentence = distribute(sentence)
-        print (sentence)
-        # (((a & b) || c) & ((a & b) || d)) || e) & (((a & b) || c) & ((a & b) || d)) || f)
-        # self.assertEqual(sentence, ['(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', ')', '||', 'e', ')', '&', '(', '(', '(', '(', 'a', '&', 'b', ')', '||', 'c', ')', '&', '(', '(', 'a', '&', 'b', ')', '||', 'd', ')', ')', '||', 'f', ')'])
+        self.assertEqual(sentence, ['(', 'a', '||', 'c', '||', 'e', ')', '&', '(', 'b', '||', 'c', '||', 'e', ')', '&', '(', 'a', '||', 'd', '||', 'e', ')', '&', '(', 'b', '||', 'd', '||', 'e', ')', '&', '(', 'a', '||', 'c', '||', 'f', ')', '&', '(', 'b', '||', 'c', '||', 'f', ')', '&', '(', 'a', '||', 'd', '||', 'f', ')', '&', '(', 'b', '||', 'd', '||', 'f', ')'])
+
+    def test_complex(self):
+        sentence = ['(', 'a', '&', '(', 'b', '||', 'c', ')', ')', '||', '(', 'd', '&', 'e', ')']
+        sentence = distribute(sentence)
+        self.assertEqual(sentence, ['(', 'a', '||', 'd', ')', '&', '(', 'b', '||', 'c', '||', 'd', ')', '&', '(', 'a', '||', 'e', ')', '&', '(', 'b', '||', 'c', '||', 'e', ')'])
 
 class TestGetPreviousOperand(unittest.TestCase):
     """
@@ -290,3 +291,10 @@ class TestSimplifyParentheses(unittest.TestCase):
     def test_different_operators(self):
         sentence = ['(', 'a', '&', 'b', ')', '||', '(', 'c', '||', 'd', ')']
         self.assertEqual(simplify_parentheses(sentence), ['(', 'a', '&', 'b', ')', '||', 'c', '||', 'd'])
+
+    def test_complex(self):
+        sentence = ['(', '(', '~', '(', '(', '~', 'c', '||', '~', 'd', ')', ')', '||', 'a', ')', ')']
+        self.assertEqual(simplify_parentheses(sentence), ['~', '(', '~', 'c', '||', '~', 'd', ')', '||', 'a'])
+
+if __name__ == "__main__":
+    unittest.main()
