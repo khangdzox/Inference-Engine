@@ -1,5 +1,34 @@
 import unittest
-from dpll import find_pure_symbol, find_unit_clause, is_clause_true, dpll_satisfiable
+from dpll import find_pure_symbol, find_unit_clause, is_clause_true, dpll_satisfiable, dpll_checking
+
+class TestDPLLChecking(unittest.TestCase):
+    """
+    Test dpll_checking.
+    """
+
+    def test_simple_true(self):
+        kb = [['a', '=>', 'b'], ['b', '=>', 'c'], ['a']]
+        query = ['c']
+        symbols = ['a', 'b', 'c']
+        self.assertTrue(dpll_checking(kb, query, symbols))
+
+    def test_simple_false(self):
+        kb = [['a', '=>', 'b'], ['b', '&', 'd', '=>', 'c'], ['a'], ['~d']]
+        query = ['c']
+        symbols = ['a', 'b', 'c', 'd']
+        self.assertFalse(dpll_checking(kb, query, symbols))
+
+    def test_complex_one(self):
+        kb = [['p2', '=>', 'p3'], ['p3', '=>', 'p1'], ['c', '=>', 'e'], ['b', '&', 'e', '=>', 'f'], ['f', '&', 'g', '=>', 'h'], ['p1', '=>', 'd'], ['p1', '&', 'p3', '=>', 'c'], ['a'], ['b'], ['p2']]
+        query = ['d']
+        symbols = ['p2', 'p3', 'p1', 'c', 'e', 'b', 'f', 'g', 'h', 'd', 'a']
+        self.assertTrue(dpll_checking(kb, query, symbols))
+
+    def test_complex_two(self):
+        kb = [['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')'], ['c'], ['~', 'f', '||', 'g']]
+        query = ['~', 'd', '&', '(', '~', 'g', '=>', '~', 'f', ')']
+        symbols = ['a', 'b', 'c', 'd', 'f', 'g']
+        self.assertTrue(dpll_checking(kb, query, symbols))
 
 class TestDPLLSatisfiable(unittest.TestCase):
     """

@@ -1,4 +1,4 @@
-# from cnf_helper import transform_to_cnf
+from cnf_helper import transform_to_cnf
 
 def dpll_checking(knowledge_base: list[list[str]], query: list[str], symbols: list[str]) -> bool:
     """
@@ -12,9 +12,9 @@ def dpll_checking(knowledge_base: list[list[str]], query: list[str], symbols: li
     Returns:
         bool: Whether the knowledge base entails the query.
     """
-    cnf_kb = [transform_to_cnf(sentence) for sentence in knowledge_base]
+    cnf_kb = [clauses for sentence in knowledge_base for clauses in transform_to_cnf(sentence)]
     cnf_not_query = transform_to_cnf(['~', '('] + query + [')'])
-    return not dpll_satisfiable(cnf_kb + [cnf_not_query], symbols, {})
+    return not dpll_satisfiable(cnf_kb + cnf_not_query, symbols, {})
 
 def dpll_satisfiable(clauses: list[list[str]], symbols: list[str], model: dict[str, bool]) -> bool:
     """
