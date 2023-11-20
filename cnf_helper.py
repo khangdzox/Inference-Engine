@@ -36,7 +36,7 @@ def transform_to_cnf(sentence : list[str]) -> list[list[str]]:
     sentence = simplify_parentheses(sentence)
     # print("11. simplify_parentheses(sentence)")
     # print(sentence)
-    sentence = distribute(sentence)
+    sentence = apply_distributivity_or_over_and(sentence)
     # print("12. distribute(sentence)")
     # print(sentence)
 
@@ -65,6 +65,7 @@ def apply_de_morgan(sentence: list[str]) -> list[str]:
     """
 
     index = 0
+    # iterate through the sentence
     while index < len(sentence):
 
         # if the current character is a '~' and followed by a '(', then apply De Morgan's law
@@ -114,7 +115,7 @@ def apply_de_morgan(sentence: list[str]) -> list[str]:
     # return the sentence
     return sentence
 
-def distribute(sentence: list[str]) -> list[str]:
+def apply_distributivity_or_over_and(sentence: list[str]) -> list[str]:
     """
     Apply the law of distributivity of disjunction over conjunction to the sentence.
 
@@ -126,43 +127,73 @@ def distribute(sentence: list[str]) -> list[str]:
     """
 
     index = 0
+    # iterate through the sentence
     while index < len(sentence):
 
+        # if found ||, then check if one of the operands is enclosed in parentheses
         if sentence[index] == '||':
             previous_begin, previous_end = get_previous_operand(sentence, index)
             following_begin, following_end = get_following_operand(sentence, index)
             temp_sentence = []
 
+            # if || followed by a parentheses, then distribute the parentheses over the other operand
             if sentence[index + 1] == '(':
                 sub_index = -1
                 sub_sentence = sentence[following_begin + 1: following_end]
 
+                # iterate through the operands in the sub-sentence
                 while sub_index < len(sub_sentence):
                     operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
+
+                    # add the distributed operand to the new sentence
+                    # format: ( previous_operand || operand ) &
                     temp_sentence += ['('] + sentence[previous_begin: previous_end + 1] + ['||'] + sub_sentence[operand_begin: operand_end + 1] + [')', '&']
+
+                    # update the index to the next operator in the sub-sentence
                     sub_index = operand_end + 1
 
+                # replace both operands with the new sentence
+                # old: ... previous_operand || ( sub-sentence ) ...
+                # new: ... ( new sub-sentence ) ...
                 sentence = sentence[:previous_begin] + ['('] + temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+
+                # remove the unnecessary parentheses created during the distribution
                 sentence = simplify_parentheses(sentence)
 
+                # jump back to the beginning of the new sub-sentence
                 index = previous_begin
 
+            # if || preceded by a parentheses, then distribute the parentheses over the other operand
             elif sentence[index - 1] == ')':
                 sub_index = -1
                 sub_sentence = sentence[previous_begin + 1: previous_end]
 
+                # iterate through the operands in the sub-sentence
                 while sub_index < len(sub_sentence):
                     operand_begin, operand_end = get_following_operand(sub_sentence, sub_index)
+
+                    # add the distributed operand to the new sentence
+                    # format: ( operand || following_operand ) &
                     temp_sentence += ['('] + sub_sentence[operand_begin: operand_end + 1] + ['||'] + sentence[following_begin: following_end + 1] + [')', '&']
+
+                    # update the index to the next operator in the sub-sentence
                     sub_index = operand_end + 1
 
+                # replace both operands with the new sentence
+                # old: ... ( sub-sentence ) || following_operand ...
+                # new: ... ( new sub-sentence ) ...
                 sentence = sentence[:previous_begin] + ['('] + temp_sentence[:-1] + [')'] + sentence[following_end + 1:]
+
+                # remove the unnecessary parentheses created during the distribution
                 sentence = simplify_parentheses(sentence)
 
+                # jump back to the beginning of the new sub-sentence
                 index = previous_begin
 
+        # move to the next operator
         index += 1
 
+    # return the sentence
     return sentence
 
 def bidirectional_elemination(sentence: list[str]) -> list[str]:
