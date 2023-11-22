@@ -113,9 +113,9 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `resolution.py`: This file contains the implementation of the resolution algorithm.
 
-    - [ ] `resolution_checking(knowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the resolution algorithm.
+    - [x] `resolution_checking(knowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the resolution algorithm.
 
-    - [ ] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
+    - [x] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
 
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
