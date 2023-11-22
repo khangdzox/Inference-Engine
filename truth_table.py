@@ -1,13 +1,17 @@
+from typing import Sequence
 
 operators = ['~', '||', '&', '=>', '<=>']
 
-def is_sentence_true(sentence: list[str | bool], model: dict[str, bool]) -> bool:
+def is_sentence_true(sentence: Sequence[str | bool], model: dict[str, bool]) -> bool:
     """
     Check if the sentence is true in the given model.
 
     Args:
-        sentence (list[str | bool]): the propositional sentence to check.
-        model (dict[str, bool]): the model with truth values for propositional variables.
+        sentence (`list[str | bool]`): the propositional sentence to check.
+        model (`dict[str, bool]`): the model with truth values for propositional variables.
+
+    Returns:
+        `bool`: Whether the sentence is true in the given model.
     """
     # process parentheses
     temp_sentence = []
@@ -65,15 +69,38 @@ def is_sentence_true(sentence: list[str | bool], model: dict[str, bool]) -> bool
         sentence = sentence[:index-1] + [sentence[index-1] == sentence[index+1]] + sentence[index+2:]
 
     if len(sentence) != 1:
-        raise ValueError("Invalid sentence")   
+        raise ValueError("Invalid sentence")
 
     return bool(sentence[0])
 
-def truth_table_checking(knowledge_base, query, symbols):
+def truth_table_checking(knowledge_base: list[list[str]], query: list[str], symbols: list[str]) -> tuple[bool, int]:
+    """
+    Check if the knowledge base entails the query using a truth table.
+
+    Args:
+        knowledge_base (`list[list[str]]`): the knowledge base.
+        query (`list[str]`): the query to be checked.
+        symbols (`list[str]`): the symbols in the knowledge base and query.
+
+    Returns:
+        `tuple[bool, int]`: a tuple includes: `Whether the knowledge base entails the query`; `The number of models checked`.
+    """
     # Check if the knowledge base entails the query using a truth table
     return truth_table_check_model(knowledge_base, query, symbols, {})
 
-def truth_table_check_model(knowledge_base, query, symbols, model: dict[str, bool]):
+def truth_table_check_model(knowledge_base: list[list[str]], query: list[str], symbols: list[str], model: dict[str, bool]):
+    """
+    Generate all possible models and check if the knowledge base entails the query.
+
+    Args:
+        knowledge_base (`list[list[str]]`): the knowledge base.
+        query (`list[str]`): the query to be checked.
+        symbols (`list[str]`): the symbols in the knowledge base and query.
+        model (`dict[str, bool]`): the model to be checked.
+
+    Returns:
+        `tuple[bool, int]`: a tuple includes: `Whether the knowledge base entails the query`; `The number of models checked`.
+    """
     # Base case: if there are no symbols left, check if the model satisfies the knowledge base and query
     if not symbols:
         if all(is_sentence_true(sentence, model) for sentence in knowledge_base):

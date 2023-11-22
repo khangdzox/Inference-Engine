@@ -1,6 +1,16 @@
 import re
 
-def parse(file_name):
+def parse(file_name: str) -> tuple[list[list[str]], list[str], list[str]]:
+    """
+    Parse the input file and return the knowledge base and query.
+
+    Args:
+        file_name (`str`): The name of the input file.
+
+    Returns:
+        `tuple[list[list[str]], list[str], list[str]]`: A tuple includes: The knowledge base; The query; The symbols in the knowledge base and query.
+    """
+
     # Read the file and return the data
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.readlines()
