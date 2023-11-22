@@ -137,7 +137,31 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `cnf_helper.py`: This file contains the helper methods for the CNF conversion.
 
-    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
+    - [x] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
+
+    - [x] `add_parentheses_around_operator(sentence, operator)`: This method adds parentheses around the given operator in the given sentence.
+
+    - [x] `simplify_parentheses(sentence)`: This method simplifies the parentheses in the given sentence.
+
+    - [x] `bidirectional_elimination(sentence)`: This method performs the bidirectional elimination on the given sentence.
+
+    - [x] `implies_elimination(sentence)`: This method performs the implies elimination on the given sentence.
+
+    - [x] `double_negation_elimination(sentence)`: This method performs the double negation elimination on the given sentence.
+
+    - [x] `combine_negation(sentence)`: This method combines the negation with the following operand in the given sentence.
+
+    - [x] `apply_de_morgan(sentence)`: This method applies the De Morgan's law on the given sentence.
+
+    - [x] `apply_distribute_or_over_and(sentence)`: This method distributes the OR operator over the AND operator in the given sentence.
+
+    - [x] `get_previous_operand(sentence, index)`: This method returns the previous operand to the operator at the given index in the given sentence.
+
+    - [x] `get_following_operand(sentence, index)`: This method returns the following operand to the operator at the given index in the given sentence.
+
+    - [x] `get_main_operator(sentence)`: This method returns the main operator in the given sentence.
+
+    - [x] `get_inside_parentheses(sentence, begin, end)`: This method returns the content inside the parentheses from begin index to end index in the given sentence.
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
