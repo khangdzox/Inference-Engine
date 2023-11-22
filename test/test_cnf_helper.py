@@ -29,6 +29,7 @@ class TestTransformToCNF(unittest.TestCase):
     def test_complex(self):
         sentence = ['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')']
         sentence = transform_to_cnf(sentence)
+        self.assertEqual(sentence, [['~a', '~c', '~d'], ['c', 'a'], ['d', 'a'], ['b'], ['~b', 'a']])
 
 class TestBidirectionalElemination(unittest.TestCase):
     """
@@ -202,6 +203,10 @@ class TestGetPreviousOperand(unittest.TestCase):
         sentence = ['(', 'b', '||', 'c', ')', '&', 'a']
         self.assertEqual(get_previous_operand(sentence, 5), (0, 4))
 
+    def test_with_not(self):
+        sentence = ['~', 'b', '&', 'a']
+        self.assertEqual(get_previous_operand(sentence, 2), (0, 1))
+
 class TestGetFollowingOperand(unittest.TestCase):
     """
     Test get_following_operand.
@@ -221,6 +226,13 @@ class TestGetFollowingOperand(unittest.TestCase):
 
         sentence = ['(', 'b', '||', 'c', ')', '&', 'a']
         self.assertEqual(get_following_operand(sentence, -1), (0, 4))
+
+    def test_with_not(self):
+        sentence = ['a', '&', '~', 'b']
+        self.assertEqual(get_following_operand(sentence, 1), (2, 3))
+
+        sentence = ['~', 'a', '&', 'b']
+        self.assertEqual(get_following_operand(sentence, -1), (0, 1))
 
 class TestAddParenthesesAroundOperator(unittest.TestCase):
     """
@@ -242,6 +254,13 @@ class TestAddParenthesesAroundOperator(unittest.TestCase):
     def test_already_have_parentheses(self):
         sentence = ['(', 'a', '&', 'b', ')']
         self.assertEqual(add_parentheses_around_operator(sentence, '&'), ['(', 'a', '&', 'b', ')'])
+
+    def test_with_not(self):
+        sentence = ['~', 'a', '&', 'b']
+        self.assertEqual(add_parentheses_around_operator(sentence, '&'), ['(', '~', 'a', '&', 'b', ')'])
+
+        sentence = ['~', '(', 'a', '&', 'b', ')', '&', 'c']
+        self.assertEqual(add_parentheses_around_operator(sentence, '&'), ['(', '~', '(', 'a', '&', 'b', ')', '&', 'c', ')'])
 
 class TestGetMainOperator(unittest.TestCase):
     """
