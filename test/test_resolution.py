@@ -35,17 +35,20 @@ class TestResolve(unittest.TestCase):
     Test resolve.
     """
 
-    def test_resolve_part(self):
+    def test_resolve_single(self):
         result = resolve(['~a', 'b'], ['~b', 'c'])
         self.assertEqual(set(result if result is not None else []), {'~a', 'c'})
-        result = resolve(['~a', 'b', 'c', '~d'], ['~a', '~b', '~c'])
-        self.assertEqual(set(result if result is not None else []), {'~a', '~d'})
+        result = resolve(['~a', 'b', 'c', '~d'], ['~a', 'b', '~c'])
+        self.assertEqual(set(result if result is not None else []), {'~a', 'b', '~d'})
+
+    def test_resolve_multiple(self):
+        self.assertIsNone(resolve(['b', 'c', '~d'], ['~a', '~b', '~c']))
+        self.assertIsNone(resolve(['~a', 'b', 'c', '~d'], ['a', '~b', '~c', 'd']))
 
     def test_resolve_all(self):
-        self.assertEqual(resolve(['~a', 'b'], ['a', '~b']), [])
-        self.assertEqual(resolve(['~a', 'b', 'c', '~d'], ['a', '~b', '~c', 'd']), [])
+        self.assertEqual(resolve(['~a'], ['a']), [])
 
-    def test_resolve_none(self):
+    def test_resolve_nothing(self):
         self.assertIsNone(resolve(['~a', 'b', 'c', '~d'], ['~a', '~d', '~e']))
 
 if __name__ == '__main__':
