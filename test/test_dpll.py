@@ -13,7 +13,7 @@ class TestDPLLChecking(unittest.TestCase):
         self.assertTrue(dpll_checking(kb, query, symbols))
 
     def test_simple_false(self):
-        kb = [['a', '=>', 'b'], ['b', '&', 'd', '=>', 'c'], ['a'], ['~d']]
+        kb = [['a', '=>', 'b'], ['b', '&', 'd', '=>', 'c'], ['a'], ['~', 'd']]
         query = ['c']
         symbols = ['a', 'b', 'c', 'd']
         self.assertFalse(dpll_checking(kb, query, symbols))
