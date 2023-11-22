@@ -11,7 +11,7 @@ def resolution(knowledge_base : list[list[str]], query : list[str]) -> bool:
                 resolvents = resolve(clause1, clause2)
                 if [] in resolvents:
                     return True
-                new += resolvents        
+                new += resolvents
         if new in clauses:
             return False
         clauses += new
