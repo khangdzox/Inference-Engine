@@ -30,6 +30,12 @@ class TestDPLLChecking(unittest.TestCase):
         symbols = ['a', 'b', 'c', 'd', 'f', 'g']
         self.assertTrue(dpll_checking(kb, query, symbols))
 
+    def test_complex_three(self):
+        kb = [['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')'], ['c'], ['~', 'f', '||', 'g']]
+        query = ['d']
+        symbols = ['a', 'b', 'c', 'd', 'f', 'g']
+        self.assertFalse(dpll_checking(kb, query, symbols))
+
 class TestDPLLSatisfiable(unittest.TestCase):
     """
     Test dpll_satisfiable

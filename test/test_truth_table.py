@@ -81,5 +81,10 @@ class TestTruthTableAlgorithm(unittest.TestCase):
         self.assertTrue(result)
         self.assertEqual(count, 3)
 
+        query = ['d']
+        symbols = ['a', 'b', 'c', 'd', 'f', 'g']
+        result, count = truth_table_checking(kb, query, symbols)
+        self.assertFalse(result)
+
 if __name__ == "__main__":
     unittest.main()

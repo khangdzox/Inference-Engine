@@ -74,8 +74,8 @@ def resolve(clause_1: list[str], clause_2: list[str]) -> list[str] | None:
     # which is the complementary literals between the two clauses
     overlap = not_clause_1_set & clause_2_set
 
-    # if there is no overlap, return None
-    if not overlap:
+    # if there is no overlap, or there are more than one overlap, return None
+    if not overlap or len(overlap) != 1:
         return None
 
     # remove the overlap from both sets

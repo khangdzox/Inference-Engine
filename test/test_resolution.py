@@ -25,21 +25,28 @@ class TestResolution(unittest.TestCase):
         query = ['~', 'd', '&', '(', '~', 'g', '=>', '~', 'f', ')']
         self.assertTrue(resolution_checking(kb, query))
 
+    def test_complex_three(self):
+        kb = [['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')'], ['c'], ['~', 'f', '||', 'g']]
+        query = ['d']
+        self.assertFalse(resolution_checking(kb, query))
+
 class TestResolve(unittest.TestCase):
     """
     Test resolve.
     """
 
     def test_resolve_part(self):
-        self.assertEqual(set(resolve(['~a', 'b'], ['~b', 'c'])), {'~a', 'c'})
-        self.assertEqual(set(resolve(['~a', 'b', 'c', '~d'], ['~a', '~b', '~c'])), {'~a', '~d'})
+        result = resolve(['~a', 'b'], ['~b', 'c'])
+        self.assertEqual(set(result if result is not None else []), {'~a', 'c'})
+        result = resolve(['~a', 'b', 'c', '~d'], ['~a', '~b', '~c'])
+        self.assertEqual(set(result if result is not None else []), {'~a', '~d'})
 
     def test_resolve_all(self):
         self.assertEqual(resolve(['~a', 'b'], ['a', '~b']), [])
         self.assertEqual(resolve(['~a', 'b', 'c', '~d'], ['a', '~b', '~c', 'd']), [])
 
     def test_resolve_none(self):
-        self.assertEqual(set(resolve(['~a', 'b', 'c', '~d'], ['~a', '~d', '~e'])), {'~a', 'b', 'c', '~d', '~e'})
+        self.assertIsNone(resolve(['~a', 'b', 'c', '~d'], ['~a', '~d', '~e']))
 
 if __name__ == '__main__':
     unittest.main()
