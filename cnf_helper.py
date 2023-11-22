@@ -1,6 +1,17 @@
 operators = ['~', '||', '&', '=>', '<=>']
 
 def transform_to_cnf(sentence : list[str]) -> list[list[str]]:
+    """
+    Transform a general propositional logic sentence into Conjunctive Normal Form (CNF).\\
+    A CNF sentence is a list of clauses, which are connected by conjuction,\\
+    where a clause is a list of literals, which are connected by disjuction.
+
+    Args:
+        sentence (`list[str]`): The propositional logic sentence.
+
+    Returns:
+        `list[list[str]]`: The transformed sentence in CNF.
+    """
 
     # add parentheses around the operators to ensure the order of operations
     sentence = add_parentheses_around_operator(sentence, "&")
@@ -42,11 +53,11 @@ def add_parentheses_around_operator(sentence: list[str], operator: str) -> list[
     Add parentheses to isolate the operands connected by the operator in the sentence.
 
     Args:
-        sentence (list[str]): The sentence to add parentheses to.
-        operator (str): The operator to isolate.
+        sentence (`list[str]`): The sentence to add parentheses to.
+        operator (`str`): The operator to isolate.
 
     Returns:
-        list[str]: The sentence with parentheses added.
+        `list[str]`: The sentence with parentheses added.
     """
     idx = 0
     # iterate through the sentence
@@ -91,17 +102,15 @@ def add_parentheses_around_operator(sentence: list[str], operator: str) -> list[
 
 def simplify_parentheses(sentence: list[str]) -> list[str]:
     """
-    Simplify the parentheses in the sentence.
-
-    Remove the parantheses if the sub-sentence inside the parentheses has the same main operator as the sentence.
-
+    Simplify the parentheses in the sentence.\\
+    Remove the parantheses if the sub-sentence inside the parentheses has the same main operator as the sentence.\\
     If the sentence does not contain any parentheses, then the sentence has been simplified.
 
     Args:
-        sentence (list[str]): The sentence to simplify.
+        sentence (`list[str]`): The sentence to simplify.
 
     Returns:
-        list[str]: The simplified sentence.
+        `list[str]`: The simplified sentence.
     """
     # if the sentence does not contain any parentheses, then the sentence has been simplified
     if "(" not in sentence:
@@ -169,10 +178,10 @@ def bidirectional_elemination(sentence: list[str]) -> list[str]:
     Eliminate the bidirectional operator from the sentence.
 
     Args:
-        sentence (list[str]): The sentence to eliminate the bidirectional operator from.
+        sentence (`list[str]`): The sentence to eliminate the bidirectional operator from.
 
     Returns:
-        list[str]: The sentence with the bidirectional operator eliminated.
+        `list[str]`: The sentence with the bidirectional operator eliminated.
     """
     # while the sentence contains the bidirectional operator
     while '<=>' in sentence:
@@ -195,10 +204,10 @@ def implication_elemination(sentence: list[str]) -> list[str]:
     Eliminate the implication operator from the sentence.
 
     Args:
-        sentence (list[str]): The sentence to eliminate the implication operator from.
+        sentence (`list[str]`): The sentence to eliminate the implication operator from.
 
     Returns:
-        list[str]: The sentence with the implication operator eliminated.
+        `list[str]`: The sentence with the implication operator eliminated.
     """
     # while the sentence contains the implication operator
     while '=>' in sentence:
@@ -221,10 +230,10 @@ def double_negation_elimination(sentence: list[str]) -> list[str]:
     Eliminate the double negation operator from the sentence.
 
     Args:
-        sentence (list[str]): The sentence to eliminate the double negation operator from.
+        sentence (`list[str]`): The sentence to eliminate the double negation operator from.
 
     Returns:
-        list[str]: The sentence with the double negation operator eliminated.
+        `list[str]`: The sentence with the double negation operator eliminated.
     """
     index = 0
     # iterate through the sentence
@@ -242,10 +251,10 @@ def combine_negation(sentence: list[str]) -> list[str]:
     Combine the negation operator with the operand following it.
 
     Args:
-        sentence (list[str]): The sentence to combine.
+        sentence (`list[str]`): The sentence to combine.
 
     Returns:
-        list[str]: The combined sentence.
+        `list[str]`: The combined sentence.
     """
     # while the sentence contains the negation operator
     while '~' in sentence:
@@ -266,13 +275,13 @@ def apply_de_morgan(sentence: list[str]) -> list[str]:
     Only works with simplified sentence.
 
     Args:
-        sentence (list[str]): The sentence to apply De Morgan's law to.
+        sentence (`list[str]`): The sentence to apply De Morgan's law to.
 
     Raises:
-        ValueError: If the sentence is invalid.
+        `ValueError`: If the sentence contains an unwanted operator.
 
     Returns:
-        list[str]: The sentence with De Morgan's law applied.
+        `list[str]`: The sentence with De Morgan's law applied.
     """
 
     index = 0
@@ -331,10 +340,10 @@ def apply_distributivity_or_over_and(sentence: list[str]) -> list[str]:
     Apply the law of distributivity of disjunction over conjunction to the sentence.
 
     Args:
-        sentence (list[str]): The sentence to apply the law of distributivity to.
+        sentence (`list[str]`): The sentence to apply the law of distributivity to.
 
     Returns:
-        list[str]: The sentence with the law of distributivity applied.
+        `list[str]`: The sentence with the law of distributivity applied.
     """
 
     index = 0
@@ -412,17 +421,22 @@ def get_previous_operand(sentence: list[str], index: int) -> tuple[int, int]:
     Get the index of the operand preceding the operator at the given index.
 
     Args:
-        sentence (list[str]): The sentence to check.
-        index (int): The index of the operator.
+        sentence (`list[str]`): The sentence to check.
+        index (`int`): The index of the operator.
 
     Raises:
-        ValueError: If the sentence is invalid.
+        `ValueError`: If the sentence is invalid.
 
     Returns:
-        tuple[int, int]: The begin and end index of the operand preceding the operator.
+        `tuple[int, int]`: The begin and end index of the operand preceding the operator.
     """
     # if the previous character is not a ')', then the operand is a single character
     if sentence[index - 1] != ')':
+        # if there is a '~' before the operand, then move the begin index back by 1
+        if index - 2 >= 0 and sentence[index - 2] == '~':
+            return index - 2, index - 1
+
+        # else, return the index of the operand
         return index - 1, index - 1
 
     parenthesis_stack = []
@@ -442,7 +456,7 @@ def get_previous_operand(sentence: list[str], index: int) -> tuple[int, int]:
 
             # check if the operand starts with a '~'
             # if it does, then move the begin index back by 1
-            if begin > 0 and sentence[begin - 1] == '~':
+            if begin - 1 >= 0 and sentence[begin - 1] == '~':
                 begin -= 1
 
             return begin, index - 1
@@ -455,14 +469,14 @@ def get_following_operand(sentence: list[str], index: int) -> tuple[int, int]:
     Get the index of the operand following the operator at the given index.
 
     Args:
-        sentence (list[str]): The sentence to check.
-        index (int): The index of the operator.
+        sentence (`list[str]`): The sentence to check.
+        index (`int`): The index of the operator.
 
     Raises:
-        ValueError: If the sentence is invalid.
+        `ValueError`: If the sentence is invalid.
 
     Returns:
-        tuple[int, int]: The begin and end index of the operand following the operator.
+        `tuple[int, int]`: The begin and end index of the operand following the operator.
     """
     # check if the operand starts with a '~'
     # if it does, get the operand after the '~'
@@ -497,17 +511,15 @@ def get_main_operator(sentence: list[str]) -> str | None:
     """
     Get the main operator that connects the operands in the sentence.
 
-    Return "" if the sentence is a single operand (no operator).
-
-    Return None if the sentence has more than one operator connecting the operands (more than one operator).
-
+    Return `""` if the sentence is a single operand (no operator).\\
+    Return `None` if the sentence has more than one operator connecting the operands (more than one operator).\\
     Return the operator if the sentence has only one operator connecting the operands (exactly one operator).
 
     Args:
-        sentence (list[str]): The sentence to check.
+        sentence (`list[str]`): The sentence to check.
 
     Returns:
-        str | None: The main operator that connects the operands in the sentence.
+        `str | None`: The main operator that connects the operands in the sentence.
     """
     operator = ""
 
@@ -539,16 +551,16 @@ def get_inside_parentheses(sentence: list[str], begin: int, end: int) -> tuple[i
     Get the sub-sentence inside the parentheses.
 
     Args:
-        sentence (list[str]): The sentence to get the sub-sentence from.
-        begin (int): The beginning index of the parentheses.
-        end (int): The ending index of the parentheses.
+        sentence (`list[str]`): The sentence to get the sub-sentence from.
+        begin (`int`): The beginning index of the parentheses.
+        end (`int`): The ending index of the parentheses.
 
     Raises:
-        ValueError: If the sentence is missing parentheses.
-        ValueError: If the sub-sentence is not enclosed in parentheses.
+        `ValueError`: If the sentence is missing parentheses.
+        `ValueError`: If the sub-sentence is not enclosed in parentheses.
 
     Returns:
-        list[str]: The sub-sentence inside the parentheses.
+        `list[str]`: The sub-sentence inside the parentheses.
     """
     # check if the sentence is enclosed in parentheses
     if get_main_operator(sentence[begin: end + 1]) != "":
