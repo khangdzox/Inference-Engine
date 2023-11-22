@@ -9,11 +9,11 @@ def resolution_checking(knowledge_base : list[list[str]], query : list[str]) -> 
     If `KB |= query`, then `~KB || query` is true in all models, then `KB & ~query` will be unsatisfiable.
 
     Args:
-        knowledge_base (list[list[str]]): The knowledge base.
-        query (list[str]): The query to be checked.
+        knowledge_base (`list[list[str]]`): The knowledge base.
+        query (`list[str]`): The query to be checked.
 
     Returns:
-        bool: Whether the query is entailed by the knowledge base.
+        `bool`: Whether the query is entailed by the knowledge base.
     """
     # transform knowledge base and query to CNF
     cnf_kb = [clauses for sentence in knowledge_base for clauses in transform_to_cnf(sentence)]
@@ -35,11 +35,11 @@ def resolution_checking(knowledge_base : list[list[str]], query : list[str]) -> 
 
                 # if two clauses resolve to an empty clause, it means the sentence "KB & ~query" is unsatisfiable
                 # therefore, the query is entailed by the knowledge base. Return True
-                if not resolvent:
+                if resolvent == []:
                     return True
 
                 # if resolvent is not in new, add it to new
-                if resolvent not in new:
+                if resolvent not in new and resolvent is not None:
                     new.append(resolvent)
 
         # if new is the subset of clauses, return False
@@ -51,18 +51,18 @@ def resolution_checking(knowledge_base : list[list[str]], query : list[str]) -> 
             if clause not in clauses:
                 clauses.append(clause)
 
-def resolve(clause_1: list[str], clause_2: list[str]) -> list[str]:
+def resolve(clause_1: list[str], clause_2: list[str]) -> list[str] | None:
     """
     Resolve two clauses using the resolution rule.
 
     This method will remove all complementary literals between the two clause and only produce one new clause.
 
     Args:
-        clause_1 (list[str]): The first clause.
-        clause_2 (list[str]): The second clause.
+        clause_1 (`list[str]`): The first clause.
+        clause_2 (`list[str]`): The second clause.
 
     Returns:
-        list[str]: The resolvent.
+        `list[str] | None`: The resolvent or None if two clauses cannot be resolved.
     """
     # negate all literals in clause 1
     not_clause_1_set = {literal[1:] if literal[0] == '~' else '~' + literal for literal in clause_1}
@@ -73,6 +73,10 @@ def resolve(clause_1: list[str], clause_2: list[str]) -> list[str]:
     # find the overlap between not_clause_1_set and clause_2_set
     # which is the complementary literals between the two clauses
     overlap = not_clause_1_set & clause_2_set
+
+    # if there is no overlap, return None
+    if not overlap:
+        return None
 
     # remove the overlap from both sets
     clause_2_set -= overlap
