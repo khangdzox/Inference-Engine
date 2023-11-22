@@ -20,7 +20,7 @@ def parse(file_name):
     # Extract unique symbols from both knowledge base and query
     symbols = lines[1] + lines[3]
     symbols = re.split(r'&|~|=>|\|\||<=>|\(|\)|;', symbols)
-    
+
     # Remove empty strings from the list
     symbols = list(set(filter(None, symbols)))
     output_kb = [[x for x in y if x] for y in output_kb]

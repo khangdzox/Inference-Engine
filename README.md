@@ -117,23 +117,51 @@ Before starting to work any part of the assignment, please make sure to follow t
 
     - [ ] `resolve(clause1, clause2)`: This method is a function that resolves two clauses to a list of resolvents.
 
-    - [ ] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
-
 - `dpll.py`: This file contains the implementation of the DPLL algorithm.
 
-    - [ ] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
+    - [x] `dpll_checking(khowledge_base, query)`: This method is a function that checks if the given query is entailed by the knowledge base using the DPLL algorithm.
 
-    - [ ] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
+    - [x] `dpll_satisfiable(clauses, symbols, model)`: This method is a recursive function that perform the DPLL algorithm.
 
-    - [ ] `find_pure_symbol(clauses, symbols, model)`: This method finds a pure symbol in the given clauses.
+    - [x] `find_pure_symbol(symbols, clauses, model)`: This method finds a pure symbol in the given clauses.
 
-    - [ ] `find_unit_clause(clauses, symbols, model)`: This method finds a unit clause in the given clauses.
+    - [x] `find_unit_clause(clauses, model)`: This method finds a unit clause in the given clauses.
 
-- `chaining_helper.py`: This file contains the helper method for the chaining algorithm.
+    - [x] `is_clause_true(clause, model)`: This method checks if the given CNF clause is true in the given model.
+
+- `chaining_helper.py`: This file contains the helper methods for the chaining algorithm.
 
     - [x] `premise(sentence)`: This method returns the premise of the given sentence.
 
     - [x] `conclusion(sentence)`: This method returns the conclusion of the given sentence.
+
+- `cnf_helper.py`: This file contains the helper methods for the CNF conversion.
+
+    - [x] `transform_to_cnf(sentence)`: This method is a function that transforms a sentence to CNF.
+
+    - [x] `add_parentheses_around_operator(sentence, operator)`: This method adds parentheses around the given operator in the given sentence.
+
+    - [x] `simplify_parentheses(sentence)`: This method simplifies the parentheses in the given sentence.
+
+    - [x] `bidirectional_elimination(sentence)`: This method performs the bidirectional elimination on the given sentence.
+
+    - [x] `implies_elimination(sentence)`: This method performs the implies elimination on the given sentence.
+
+    - [x] `double_negation_elimination(sentence)`: This method performs the double negation elimination on the given sentence.
+
+    - [x] `combine_negation(sentence)`: This method combines the negation with the following operand in the given sentence.
+
+    - [x] `apply_de_morgan(sentence)`: This method applies the De Morgan's law on the given sentence.
+
+    - [x] `apply_distribute_or_over_and(sentence)`: This method distributes the OR operator over the AND operator in the given sentence.
+
+    - [x] `get_previous_operand(sentence, index)`: This method returns the previous operand to the operator at the given index in the given sentence.
+
+    - [x] `get_following_operand(sentence, index)`: This method returns the following operand to the operator at the given index in the given sentence.
+
+    - [x] `get_main_operator(sentence)`: This method returns the main operator in the given sentence.
+
+    - [x] `get_inside_parentheses(sentence, begin, end)`: This method returns the content inside the parentheses from begin index to end index in the given sentence.
 
 - `parse.py`: This file contains utility functions that are used by the other files.
 
