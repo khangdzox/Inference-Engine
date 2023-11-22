@@ -29,7 +29,6 @@ class TestTransformToCNF(unittest.TestCase):
     def test_complex(self):
         sentence = ['(', 'a', '<=>', '(', 'c', '=>', '~', 'd', ')', ')', '&', 'b', '&', '(', 'b', '=>', 'a', ')']
         sentence = transform_to_cnf(sentence)
-        print(sentence)
 
 class TestBidirectionalElemination(unittest.TestCase):
     """
