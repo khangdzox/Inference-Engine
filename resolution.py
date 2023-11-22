@@ -3,27 +3,33 @@ from cnf_helper import transform_to_cnf
 def resolution(knowledge_base : list[list[str]], query : list[str]) -> bool:
     cnf_kb = [clauses for sentence in knowledge_base for clauses in transform_to_cnf(sentence)]
     cnf_not_query = transform_to_cnf(['~', '('] + query + [')'])
-    print(cnf_kb)
-    print(cnf_not_query)
+
+    # clause: KB & ~query
     clauses = cnf_kb + cnf_not_query
-    print(clauses)
-    new = []
+
+    new: list[list[str]] = []
+
     while True:
-        idx1 = 0
-        while idx1 < len(clauses):
-            idx2 = idx1 + 1
-            while idx2 < len(clauses):
-                resolvents = resolve(clauses[idx1], clauses[idx2])
-                if resolvents == []:
+        for i in range(len(clauses) - 1):
+
+            for j in range(i + 1, len(clauses)):
+
+                resolvent = resolve(clauses[i], clauses[j])
+
+                if not resolvent:
                     return True
-                new.append(resolvents)
-                idx2 += 1
-            idx1 += 1
+
+                if resolvent not in new:
+                    new.append(resolvent)
+
         # if new is the subset of clauses, return False
-        
-        if {tuple(x) for x in new}.issubset({tuple(x) for x in clauses}):
+        if all(clause in clauses for clause in new):
             return False
-        clauses.extend(new)
+
+        # add new to clauses
+        for clause in new:
+            if clause not in clauses:
+                clauses.append(clause)
 
 def resolve(clause_1: list[str], clause_2: list[str]) -> list[str]:
     """
