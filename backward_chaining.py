@@ -6,14 +6,12 @@ def backward_chaining_checking(knowledge_base: list[list[str]], query: str, exam
     Warning: Do not use the examined_symbols parameter. It's only used for internal recursion.
 
     Args:
-        knowledge_base (list[list[str]]): the list of sentences in Horn form.
-        query (str): the query to be checked.
-        examined_symbols (list[str]): the list of symbols that have been examined. For internal recursion only.
+        knowledge_base (`list[list[str]]`): the list of sentences in Horn form.
+        query (`str`): the query to be checked.
+        examined_symbols (`list[str]`): the list of symbols that have been examined. For internal recursion only.
 
     Returns:
-        tuple: a tuple of two elements:
-            bool: True if the query is entailed by the knowledge base, False otherwise.
-             set[str]: the set of symbols that are entailed by the knowledge base.
+        `tuple[bool, set[str]]`: a tuple includes: Whether the query is entailed by the knowledge base; The set of symbols entailed by the knowledge base.
     """
     # avoid dangerous default value
     if examined_symbols is None:

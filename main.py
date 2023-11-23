@@ -3,10 +3,10 @@ from parse import parse
 from truth_table import truth_table_checking
 from forward_chaining import forward_chaining_checking
 from backward_chaining import backward_chaining_checking
-# from resolution import resolution_checking
-# from dpll import dpll_satisfiable
+from resolution import resolution_checking
+from dpll import dpll_checking
 
-cli_usage = f"Usage: iengine <method> <input_file>\nWhere\n\t{'<method>':<12} is one of:\n\t - {'TT':<4} for  Truth Table checking\n\t - {'FC':<4} for  Forward-Chaining checking\n\t - {'BC':<4} for  Backward-Chaining checking\n\t - {'RES':<4} for  RESolution checking\n\t - {'DPLL'} for  DPLL-algorithm checking\n\n\t{'<input_file>':<12} is the path to the input file\n\nExample: iengine TT data.txt"
+cli_usage = f"Usage: iengine <method> <input_file>\nWhere:\n\t<method> is one of:\n\t - {'TT':<4} for  Truth Table checking\n\t - {'FC':<4} for  Forward-Chaining checking\n\t - {'BC':<4} for  Backward-Chaining checking\n\t - {'RES':<4} for  RESolution checking\n\t - {'DPLL'} for  DPLL-algorithm checking\n\n\t{'<input_file>':<12} is the path to the input file\n\nExample: iengine TT data.txt"
 
 # Get command line arguments
 try:
@@ -26,8 +26,12 @@ match method.lower():
     case "bc":
         result, details = backward_chaining_checking(knowledge_base, query[0])
         details = ", ".join(details)
-    # case "dpll":
-    #     result, details = dpll_satisfiable(knowledge_base)
+    case "dpll":
+        result = dpll_checking(knowledge_base, query, symbols)
+        details = "Inferred with DPLL algorithm"
+    case "res":
+        result = resolution_checking(knowledge_base, query)
+        details = "Inferred with resolution algorithm"
     case _:
         print("Error: Invalid method \"" + method + "\"\n\n" + cli_usage)
         sys.exit()
