@@ -11,7 +11,7 @@ def backward_chaining_checking(knowledge_base: list[list[str]], query: str, exam
         examined_symbols (`list[str]`): the list of symbols that have been examined. For internal recursion only.
 
     Returns:
-        `tuple[bool, set[str]]`: a tuple includes: Whether the query is entailed by the knowledge base; The set of symbols entailed by the knowledge base.
+        `tuple[bool, set[str]]`: a tuple includes: `Whether the query is entailed by the knowledge base`; `The set of symbols entailed by the knowledge base`.
     """
     # avoid dangerous default value
     if examined_symbols is None:
@@ -25,7 +25,7 @@ def backward_chaining_checking(knowledge_base: list[list[str]], query: str, exam
     if [query] in knowledge_base:
         return True, {query}
 
-    # initialize entailed_symbols with symbols that are already in the knowledge base
+    # initialize entailed_symbols
     entailed_symbols = []
 
     any_true = False
