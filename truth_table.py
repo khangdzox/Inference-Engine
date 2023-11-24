@@ -86,9 +86,9 @@ def truth_table_checking(knowledge_base: list[list[str]], query: list[str], symb
         `tuple[bool, int]`: a tuple includes: `Whether the knowledge base entails the query`; `The number of models checked`.
     """
     # Check if the knowledge base entails the query using a truth table
-    return truth_table_check_model(knowledge_base, query, symbols, {})
+    return truth_table_enumerate_models(knowledge_base, query, symbols, {})
 
-def truth_table_check_model(knowledge_base: list[list[str]], query: list[str], symbols: list[str], model: dict[str, bool]):
+def truth_table_enumerate_models(knowledge_base: list[list[str]], query: list[str], symbols: list[str], model: dict[str, bool]):
     """
     Generate all possible models and check if the knowledge base entails the query.
 
@@ -113,7 +113,7 @@ def truth_table_check_model(knowledge_base: list[list[str]], query: list[str], s
         rest = symbols[1:]
 
         # Recursively check with P being true and false
-        true_result, true_count = truth_table_check_model(knowledge_base, query, rest, {**model, P: True})
-        false_result, false_count = truth_table_check_model(knowledge_base, query, rest, {**model, P: False})
+        true_result, true_count = truth_table_enumerate_models(knowledge_base, query, rest, {**model, P: True})
+        false_result, false_count = truth_table_enumerate_models(knowledge_base, query, rest, {**model, P: False})
 
         return true_result and false_result, true_count + false_count
