@@ -8,7 +8,7 @@ def parse(file_name: str) -> tuple[list[list[str]], list[str], list[str]]:
         file_name (`str`): The name of the input file.
 
     Returns:
-        `tuple[list[list[str]], list[str], list[str]]`: A tuple includes: The knowledge base; The query; The symbols in the knowledge base and query.
+        `tuple[list[list[str]], list[str], list[str]]`: A tuple includes: `The knowledge base`; `The query`; `The symbols in the knowledge base and query`.
     """
 
     # Read the file and return the data

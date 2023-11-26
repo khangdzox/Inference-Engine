@@ -99,7 +99,9 @@ Before starting to work any part of the assignment, please make sure to follow t
 
 - `truth_table.py`: This file contains the implementation of the truth table checking algorithm.
 
-    - [x] `truth_table_checking(knowledge_base, query)`: This method is a recursive function that checks if the query is entailed by the knowledge base using the truth table generated as a tree.
+    - [x] `truth_table_checking(knowledge_base, query, symbols)`: This method initiates the truth table checking algorithm.
+
+    - [x] `truth_table_enumerate_models(knowledge_base, query, symbols, model)`: This method is a recursive function that generates and enumerates all the possible models of the knowledge base.
 
     - [x] `is_sentence_true(sentence, model)`: This method checks if the sentence is true in the given model.
 
@@ -183,15 +185,9 @@ To test the program, run the command `python -m unittest discover test -v` from 
 
 ## Resources
 
-### Acknowledgements
-
 - [String split using RegEx](https://docs.python.org/3/library/re.html#re.split)
 
 - [Unit Testing in Python](https://docs.python.org/3/library/unittest.html)
-
-### References (placeholder)
-
-- [Truth Table Generator](https://web.stanford.edu/class/cs103/tools/truth-table-tool/)
 
 <br>
 
