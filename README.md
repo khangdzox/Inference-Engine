@@ -189,6 +189,8 @@ To test the program, run the command `python -m unittest discover test -v` from 
 
 - [Unit Testing in Python](https://docs.python.org/3/library/unittest.html)
 
+- Artificial Intelligence: A Modern Approach (3rd Edition) by Stuart Russell and Peter Norvig
+
 <br>
 
 ## Copyright
